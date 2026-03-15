@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LegalDoc.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+34e6345e6f6dd6c5646cf456e5bbc37714c35114")]
 [assembly: System.Reflection.AssemblyProductAttribute("LegalDoc.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LegalDoc.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

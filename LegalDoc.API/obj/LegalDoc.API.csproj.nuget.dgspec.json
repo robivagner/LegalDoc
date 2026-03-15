@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.API\\LegalDoc.API.csproj": {}
+    "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.API\\LegalDoc.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.API\\LegalDoc.API.csproj": {
+    "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.API\\LegalDoc.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.API\\LegalDoc.API.csproj",
+        "projectUniqueName": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.API\\LegalDoc.API.csproj",
         "projectName": "LegalDoc.API",
-        "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.API\\LegalDoc.API.csproj",
-        "packagesPath": "C:\\Users\\Robert\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.API\\obj\\",
+        "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.API\\LegalDoc.API.csproj",
+        "packagesPath": "C:\\Users\\mirel\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Robert\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\mirel\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -26,14 +26,14 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Application\\LegalDoc.Application.csproj": {
-                "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Application\\LegalDoc.Application.csproj"
+              "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Application\\LegalDoc.Application.csproj": {
+                "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Application\\LegalDoc.Application.csproj"
               },
-              "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj": {
-                "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj"
+              "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj": {
+                "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj"
               },
-              "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Infrastructure\\LegalDoc.Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Infrastructure\\LegalDoc.Infrastructure.csproj"
+              "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Infrastructure\\LegalDoc.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Infrastructure\\LegalDoc.Infrastructure.csproj"
               }
             }
           }
@@ -61,6 +61,14 @@
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[10.0.3, )"
+            },
+            "Scalar.AspNetCore": {
+              "target": "Package",
+              "version": "[2.0.14, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[10.1.4, )"
             }
           },
           "imports": [
@@ -82,7 +90,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Users\\mirel\\.dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -500,17 +508,17 @@
         }
       }
     },
-    "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Application\\LegalDoc.Application.csproj": {
+    "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Application\\LegalDoc.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Application\\LegalDoc.Application.csproj",
+        "projectUniqueName": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Application\\LegalDoc.Application.csproj",
         "projectName": "LegalDoc.Application",
-        "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Application\\LegalDoc.Application.csproj",
-        "packagesPath": "C:\\Users\\Robert\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Application\\obj\\",
+        "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Application\\LegalDoc.Application.csproj",
+        "packagesPath": "C:\\Users\\mirel\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Robert\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\mirel\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -522,8 +530,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj": {
-                "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj"
+              "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj": {
+                "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj"
               }
             }
           }
@@ -569,7 +577,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Users\\mirel\\.dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -847,17 +855,17 @@
         }
       }
     },
-    "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj": {
+    "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj",
         "projectName": "LegalDoc.Domain",
-        "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj",
-        "packagesPath": "C:\\Users\\Robert\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\obj\\",
+        "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj",
+        "packagesPath": "C:\\Users\\mirel\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Robert\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\mirel\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -902,7 +910,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Users\\mirel\\.dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -1180,17 +1188,17 @@
         }
       }
     },
-    "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Infrastructure\\LegalDoc.Infrastructure.csproj": {
+    "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Infrastructure\\LegalDoc.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Infrastructure\\LegalDoc.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Infrastructure\\LegalDoc.Infrastructure.csproj",
         "projectName": "LegalDoc.Infrastructure",
-        "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Infrastructure\\LegalDoc.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\Robert\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Infrastructure\\LegalDoc.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\mirel\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Robert\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\mirel\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -1202,11 +1210,11 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Application\\LegalDoc.Application.csproj": {
-                "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Application\\LegalDoc.Application.csproj"
+              "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Application\\LegalDoc.Application.csproj": {
+                "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Application\\LegalDoc.Application.csproj"
               },
-              "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj": {
-                "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj"
+              "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj": {
+                "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj"
               }
             }
           }
@@ -1252,7 +1260,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Users\\mirel\\.dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

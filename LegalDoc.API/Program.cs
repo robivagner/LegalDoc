@@ -1,41 +1,37 @@
+using LegalDoc.Application.Abstractions;
+using LegalDoc.Infrastructure.Persistence;
+using LegalDoc.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// --- 1. ADAUGĂ ASTA LA SERVICES ---
+builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer(); // Necesar pentru Swagger
+builder.Services.AddSwaggerGen();           // Activează generarea documentației Swagger
+
+// Configurare MediatR
+builder.Services.AddMediatR(cfg => 
+    cfg.RegisterServicesFromAssembly(typeof(IDocumentsRepository).Assembly));
+
+// Configurare Baza de Date
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IDocumentsRepository, DocumentsRepository>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- 2. ADAUGĂ ASTA LA MIDDLEWARE ---
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();          // Generează fișierul JSON de documentație
+    app.UseSwaggerUI();         // Activează interfața vizuală (Pagina de test)
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
