@@ -5,27 +5,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LegalDoc.Infrastructure.Repositories;
 
-public class DocumentsRepository : IDocumentsRepository
+public class DocumentsRepository(AppDbContext dbContext) : IDocumentsRepository
 {
-    private readonly AppDbContext _context;
-
-    public DocumentsRepository(AppDbContext context)
-    {
-        _context = context;
-    }
     public async Task AddAsync(LegalDocument document, CancellationToken cancellationToken = default)
     {
-        await _context.LegalDocuments.AddAsync(document, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        await dbContext.LegalDocuments.AddAsync(document, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<LegalDocument?> FindAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _context.LegalDocuments.FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
+        return await dbContext.LegalDocuments.FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
+    }
+
+    public async Task UpdateAsync(LegalDocument document, CancellationToken cancellationToken = default)
+    {
+        dbContext.LegalDocuments.Update(document);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public IQueryable<LegalDocument> Query()
     {
-        return _context.LegalDocuments.AsQueryable();
+        return dbContext.LegalDocuments.AsQueryable();
     }
 }

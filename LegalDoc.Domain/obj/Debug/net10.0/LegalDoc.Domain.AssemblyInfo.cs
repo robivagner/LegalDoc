@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LegalDoc.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+34e6345e6f6dd6c5646cf456e5bbc37714c35114")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e7e7f32a1ebca33f8169026a6e53437f747c2a7c")]
 [assembly: System.Reflection.AssemblyProductAttribute("LegalDoc.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LegalDoc.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

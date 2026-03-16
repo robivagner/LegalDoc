@@ -20,6 +20,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IDocumentsRepository, DocumentsRepository>();
+builder.Services.AddScoped<IRegistryRepository, RegistryRepository>();
+builder.Services.AddScoped<ILawyerRepository, LawyerRepository>();
+builder.Services.AddScoped<IReviewTaskRepository, ReviewTaskRepository>();
 
 var app = builder.Build();
 

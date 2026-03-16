@@ -6,5 +6,6 @@ public interface IDocumentsRepository
 {
     Task AddAsync(LegalDocument document, CancellationToken cancellationToken = default);
     Task<LegalDocument?> FindAsync(Guid id, CancellationToken cancellationToken = default);
+    Task UpdateAsync(LegalDocument document, CancellationToken cancellationToken = default);
     IQueryable<LegalDocument> Query();
 }

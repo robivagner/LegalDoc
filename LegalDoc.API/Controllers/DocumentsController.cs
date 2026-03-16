@@ -8,28 +8,28 @@ namespace LegalDoc.API.Controllers;
 
 [ApiController]
 [Route("api/v1/documents")]
-public class DocumentsController : ControllerBase
+public class DocumentsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public DocumentsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpPost]
     public async Task<IActionResult> UploadDocument([FromBody] UploadDocumentCommand request)
     {
-        var id = await _mediator.Send(request);
+        var id = await mediator.Send(request);
         
         return Created($"api/v1/documents/{id}", new { id });
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetDocuments([FromQuery] DocumentStatus? status)
+    public async Task<IActionResult> GetDocuments([FromQuery] DocumentStatus? status, [FromQuery] Guid? registryId)
     {
-        var query = new GetDocumentQuery(status);
-        var result = await _mediator.Send(query);
+        var query = new GetDocumentsQuery(status, registryId);
+        var result = await mediator.Send(query);
         return Ok(result);
+    }
+    
+    [HttpPatch("{id}/summary")]
+    public async Task<IActionResult> UpdateSummary(Guid id, [FromBody] string summary)
+    {
+        await mediator.Send(new UpdateDocumentSummaryCommand(id, summary));
+        return NoContent();
     }
 }

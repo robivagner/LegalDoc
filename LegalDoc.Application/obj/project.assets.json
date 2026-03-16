@@ -423,19 +423,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\mirel\\.nuget\\packages\\": {}
+    "C:\\Users\\Robert\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Application\\LegalDoc.Application.csproj",
+      "projectUniqueName": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Application\\LegalDoc.Application.csproj",
       "projectName": "LegalDoc.Application",
-      "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Application\\LegalDoc.Application.csproj",
-      "packagesPath": "C:\\Users\\mirel\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Application\\obj\\",
+      "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Application\\LegalDoc.Application.csproj",
+      "packagesPath": "C:\\Users\\Robert\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Application\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\mirel\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Robert\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -447,8 +447,8 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj": {
-              "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj"
+            "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj": {
+              "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj"
             }
           }
         }
@@ -494,7 +494,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Users\\mirel\\.dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

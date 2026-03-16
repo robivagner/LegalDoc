@@ -8,19 +8,19 @@
     "net10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\mirel\\.nuget\\packages\\": {}
+    "C:\\Users\\Robert\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj",
+      "projectUniqueName": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj",
       "projectName": "LegalDoc.Domain",
-      "projectPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\LegalDoc.Domain.csproj",
-      "packagesPath": "C:\\Users\\mirel\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mirel\\RiderProjects\\LegalDoc\\LegalDoc.Domain\\obj\\",
+      "projectPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\LegalDoc.Domain.csproj",
+      "packagesPath": "C:\\Users\\Robert\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\mirel\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Robert\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -65,7 +65,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Users\\mirel\\.dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",
