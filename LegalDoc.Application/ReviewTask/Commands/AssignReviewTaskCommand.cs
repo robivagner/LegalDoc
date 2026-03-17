@@ -3,4 +3,4 @@ using MediatR;
 
 namespace LegalDoc.Application.ReviewTask.Commands;
 
-public record AssignReviewTaskCommand(Guid DocumentId, Guid LawyerId, ReviewType TaskType, string Description) : IRequest<Guid>;
+public record AssignReviewTaskCommand(Guid DocumentId, Guid LawyerId, string Description) : IRequest<Guid>;

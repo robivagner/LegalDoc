@@ -19,7 +19,7 @@ public class AssignReviewTaskCommandHandler(IDocumentsRepository documentsReposi
             throw new Exception("Lawyer not found.");
         }
         
-        var task = Domain.Entities.ReviewTask.Create(request.DocumentId, request.LawyerId, request.TaskType, request.Description);
+        var task = Domain.Entities.ReviewTask.Create(request.DocumentId, request.LawyerId, request.Description);
         await reviewTaskRepository.AddAsync(task, cancellationToken);
 
         return task.Id;

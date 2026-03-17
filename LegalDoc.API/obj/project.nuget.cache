@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "2P6XAkGtZmQ=",
+  "dgSpecHash": "y6/b/awjpkg=",
   "success": true,
   "projectFilePath": "C:\\Users\\Robert\\RiderProjects\\Proiect.NET2\\LegalDoc.API\\LegalDoc.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Robert\\.nuget\\packages\\fluentvalidation\\12.1.1\\fluentvalidation.12.1.1.nupkg.sha512",
+    "C:\\Users\\Robert\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\12.1.1\\fluentvalidation.dependencyinjectionextensions.12.1.1.nupkg.sha512",
     "C:\\Users\\Robert\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Robert\\.nuget\\packages\\mediatr\\14.0.0\\mediatr.14.0.0.nupkg.sha512",
     "C:\\Users\\Robert\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",

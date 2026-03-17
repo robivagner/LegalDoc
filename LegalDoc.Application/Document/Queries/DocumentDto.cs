@@ -1,3 +1,3 @@
 ﻿namespace LegalDoc.Application.Documents.Queries;
 
-public record DocumentDto(Guid Id, string Title, string FileName, string Status, DateTime UploadedAt);
+public record DocumentDto(Guid Id, Guid RegistryId, string Title, string FileName, string Status, DateTime CreatedAt, string? Summary, string? Clauses, string? Risks);

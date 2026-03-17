@@ -20,6 +20,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(d => d.StoragePath).IsRequired();
             e.Property(d => d.CreatedAt).IsRequired();
             e.Property(d => d.Status).IsRequired();
+            e.Property(d => d.Summary).HasColumnType("text");
+            e.Property(d => d.Clauses).HasColumnType("text");
+            e.Property(d => d.Risks).HasColumnType("text");
+            e.Property(d => d.RegistryId).IsRequired();
         });
         
         modelBuilder.Entity<Registry>(e =>

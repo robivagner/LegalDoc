@@ -2,7 +2,8 @@
 
 public enum ReviewTaskStatus
 {
-    Pending,
+    Created,
+    Reviewing,
     Completed,
     Rejected
 }

@@ -3,4 +3,4 @@ using MediatR;
 
 namespace LegalDoc.Application.ReviewTask.Queries;
 
-public record GetReviewTasksQuery(Guid? LawyerId = null, ReviewTaskStatus? Status = null) : IRequest<List<LawyerTaskDto>>;
+public record GetReviewTasksQuery(Guid? LawyerId = null, ReviewTaskStatus? Status = null) : IRequest<List<ReviewTaskDto>>;

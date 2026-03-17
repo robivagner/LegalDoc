@@ -4,9 +4,9 @@ using MediatR;
 
 namespace LegalDoc.Application.ReviewTask.Queries;
 
-public class GetReviewTasksQueryHandler(IReviewTaskRepository repository) : IRequestHandler<GetReviewTasksQuery, List<LawyerTaskDto>>
+public class GetReviewTasksQueryHandler(IReviewTaskRepository repository) : IRequestHandler<GetReviewTasksQuery, List<ReviewTaskDto>>
 {
-    public Task<List<LawyerTaskDto>> Handle(GetReviewTasksQuery request, CancellationToken cancellationToken)
+    public Task<List<ReviewTaskDto>> Handle(GetReviewTasksQuery request, CancellationToken cancellationToken)
     {
         var query = repository.Query();
         
@@ -20,12 +20,12 @@ public class GetReviewTasksQueryHandler(IReviewTaskRepository repository) : IReq
             query = query.Where(t => t.Status == request.Status.Value);
         }
 
-        var result = query.Select(t => new LawyerTaskDto(
+        var result = query.Select(t => new ReviewTaskDto(
                 t.Id,
                 t.DocumentId,
-                t.TaskType.ToString(),
-                t.Status.ToString(),
+                t.LawyerId,
                 t.Description,
+                t.Status.ToString(),
                 t.AssignedAt))
             .ToList();
 

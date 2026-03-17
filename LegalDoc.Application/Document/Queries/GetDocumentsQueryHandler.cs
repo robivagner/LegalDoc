@@ -22,10 +22,14 @@ public class GetDocumentsQueryHandler(IDocumentsRepository repository)
 
         var result = documents.Select(d => new DocumentDto(
             d.Id,
+            d.RegistryId,
             d.Title,
             d.FileName,
             d.Status.ToString(),
-            d.CreatedAt)).ToList();
+            d.CreatedAt,
+            d.Summary,
+            d.Clauses,
+            d.Risks)).ToList();
     
         return Task.FromResult(result);
     }

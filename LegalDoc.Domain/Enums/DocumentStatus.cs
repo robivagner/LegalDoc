@@ -3,7 +3,8 @@
 public enum DocumentStatus
 {
     Uploaded,
-    Processing,
+    AwaitingReview,
+    InReview,
     Completed,
-    Failed
+    Rejected
 }
