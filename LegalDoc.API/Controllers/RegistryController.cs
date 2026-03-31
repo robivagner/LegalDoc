@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace LegalDoc.API.Controllers;
 
 [ApiController]
-[Route("api/v1/departments")]
+[Route("api/v1/registries")]
 public class RegistryController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> CreateRegistry([FromBody] CreateRegistryCommand command)
     {
         var id = await mediator.Send(command);
-        return Created($"/api/v1/departments/{id}", new { id });
+        return Created($"/api/v1/registries/{id}", new { id });
     }
     
     [HttpGet]

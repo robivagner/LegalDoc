@@ -4,7 +4,7 @@ namespace LegalDoc.Domain.Entities;
 
 public class ReviewTask
 {
-    public ReviewTask()
+    private ReviewTask()
     {
         
     }
@@ -33,7 +33,17 @@ public class ReviewTask
     {
         if(newStatus == ReviewTaskStatus.Created)
             throw new InvalidOperationException("Cannot update status of a review task to Created.");
+        if(Status == ReviewTaskStatus.Completed || Status == ReviewTaskStatus.Rejected)
+            throw new InvalidOperationException("Cannot update status of a review task that was completed or rejected.");
         
         Status = newStatus;
+    }
+
+    public void UpdateLawyer(Guid newLawyerId)
+    {
+        if (newLawyerId == LawyerId)
+            throw new InvalidOperationException("Cannot update lawyer to the same one.");
+        
+        LawyerId = newLawyerId;
     }
 }

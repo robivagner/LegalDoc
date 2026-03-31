@@ -7,7 +7,7 @@ public class GetLawyersQueryHandler(ILawyerRepository repository) : IRequestHand
 {
     public Task<List<LawyerDto>> Handle(GetLawyersQuery request, CancellationToken cancellationToken)
     {
-        var lawyers = repository.Query().Select(l => new LawyerDto(l.Id, l.Name, l.BarNumber, l.Email)).ToList();
+        var lawyers = repository.Query().Select(l => new LawyerDto(l.Id, l.Name, l.BarNumber, l.Email, l.IsActive)).ToList();
         return Task.FromResult(lawyers);
     }
 }

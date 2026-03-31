@@ -3,7 +3,6 @@
 public enum ReviewTaskStatus
 {
     Created,
-    Reviewing,
     Completed,
     Rejected
 }

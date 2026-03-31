@@ -24,4 +24,11 @@ public class LawyersController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(query);
         return Ok(result);
     }
+    
+    [HttpPatch("{lawyerId}/lawyer-activity")]
+    public async Task<IActionResult> UpdateLawyerActivity(Guid lawyerId, [FromQuery] bool isActive)
+    {
+        await mediator.Send(new UpdateLawyerActivityCommand(lawyerId, isActive));
+        return NoContent();
+    }
 }

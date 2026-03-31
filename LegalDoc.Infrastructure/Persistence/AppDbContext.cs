@@ -40,6 +40,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(l => l.Name).IsRequired().HasMaxLength(200);
             e.Property(l => l.BarNumber).IsRequired().HasMaxLength(50);
             e.Property(l => l.Email).HasMaxLength(150);
+            e.Property(l => l.IsActive).IsRequired();
         });
         
         modelBuilder.Entity<ReviewTask>(e =>

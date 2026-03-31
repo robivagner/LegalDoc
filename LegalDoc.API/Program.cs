@@ -3,6 +3,8 @@ using LegalDoc.Infrastructure.Persistence;
 using LegalDoc.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
+using Microsoft.OpenApi;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +16,16 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddValidatorsFromAssembly(typeof(IDocumentsRepository).Assembly);
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer(); // Necesar pentru Swagger
-builder.Services.AddSwaggerGen();           // Activează generarea documentației Swagger
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Legal Document Summarizer API",
+        Version = "v1",
+        Description = "API for legal document summarizer",
+    });
+});           // Activează generarea documentației Swagger
+builder.Services.AddFluentValidationAutoValidation();
 
 // Configurare MediatR
 builder.Services.AddMediatR(cfg => 
@@ -22,7 +33,7 @@ builder.Services.AddMediatR(cfg =>
 
 // Configurare Baza de Date
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
 builder.Services.AddScoped<IDocumentsRepository, DocumentsRepository>();
 builder.Services.AddScoped<IRegistryRepository, RegistryRepository>();
@@ -35,7 +46,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();          // Genereaza fisierul JSON de documentatie
-    app.UseSwaggerUI();         // Activeaza interfața vizuala (Pagina de test)
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Legal Document API V1");
+        c.RoutePrefix = string.Empty;
+    });         // Activeaza interfața vizuala (Pagina de test)
     app.MapOpenApi();
 }
 

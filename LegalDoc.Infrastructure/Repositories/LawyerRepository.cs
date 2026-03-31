@@ -18,6 +18,12 @@ public class LawyerRepository(AppDbContext dbContext) : ILawyerRepository
         return await dbContext.Lawyers.FirstOrDefaultAsync(l => l.Id == id, cancellationToken);
     }
 
+    public async Task UpdateAsync(Lawyer lawyer, CancellationToken cancellationToken = default)
+    {
+        dbContext.Lawyers.Update(lawyer);
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
     public IQueryable<Lawyer> Query()
     {
         return dbContext.Lawyers.AsQueryable();

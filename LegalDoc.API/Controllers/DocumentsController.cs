@@ -26,10 +26,10 @@ public class DocumentsController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
     
-    [HttpPatch("{id}/ai-analysis")]
-    public async Task<IActionResult> UpdateAiAnalysis(Guid id, [FromBody] UpdateDocumentAiAnalysisCommand request)
+    [HttpPatch("{documentId}/ai-analysis")]
+    public async Task<IActionResult> UpdateAiAnalysis(Guid documentId, [FromBody] AiAnalysisRequest request)
     {
-        var command = request with {DocumentId = id};
+        var command = new UpdateDocumentAiAnalysisCommand(documentId, request.Summary, request.Clauses, request.Risks);
         await mediator.Send(command);
         return NoContent();
     }

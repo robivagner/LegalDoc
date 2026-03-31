@@ -195,3 +195,5 @@ C:\Users\Robert\RiderProjects\Proiect.NET2\LegalDoc.API\bin\Debug\net10.0\tr\Mic
 C:\Users\Robert\RiderProjects\Proiect.NET2\LegalDoc.API\bin\Debug\net10.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\Robert\RiderProjects\Proiect.NET2\LegalDoc.API\bin\Debug\net10.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\Robert\RiderProjects\Proiect.NET2\LegalDoc.API\bin\Debug\net10.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\Users\Robert\RiderProjects\Proiect.NET2\LegalDoc.API\bin\Debug\net10.0\SharpGrip.FluentValidation.AutoValidation.Mvc.dll
+C:\Users\Robert\RiderProjects\Proiect.NET2\LegalDoc.API\bin\Debug\net10.0\SharpGrip.FluentValidation.AutoValidation.Shared.dll

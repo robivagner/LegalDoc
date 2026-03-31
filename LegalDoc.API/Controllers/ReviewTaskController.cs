@@ -25,10 +25,17 @@ public class ReviewTasksController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
     
-    [HttpPatch("{id}/review-task-status")]
-    public async Task<IActionResult> UpdateReviewTaskStatus(Guid id, [FromBody] ReviewTaskStatus status)
+    [HttpPatch("{reviewTaskId}/review-task-status")]
+    public async Task<IActionResult> UpdateReviewTaskStatus(Guid reviewTaskId, [FromQuery] ReviewTaskStatus status)
     {
-        await mediator.Send(new UpdateReviewTaskStatusCommand(id, status));
+        await mediator.Send(new UpdateReviewTaskStatusCommand(reviewTaskId, status));
+        return NoContent();
+    }
+    
+    [HttpPatch("{reviewTaskId}/review-task-lawyer")]
+    public async Task<IActionResult> UpdateReviewTaskLawyer(Guid reviewTaskId, [FromQuery] Guid newLawyerId)
+    {
+        await mediator.Send(new UpdateReviewTaskLawyerCommand(reviewTaskId, newLawyerId));
         return NoContent();
     }
 }

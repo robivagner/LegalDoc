@@ -2,7 +2,7 @@
 
 public class Lawyer
 {
-    public Lawyer()
+    private Lawyer()
     {
         
     }
@@ -11,6 +11,7 @@ public class Lawyer
     public string Name { get; private set; } = null!;
     public string BarNumber { get; private set; } = null!;
     public string? Email { get; private set; } = null!;
+    public bool IsActive { get; private set; }
 
     public static Lawyer Create(string name, string barNumber, string? email)
     {
@@ -29,7 +30,16 @@ public class Lawyer
             Id = Guid.NewGuid(),
             Name = name,
             BarNumber = barNumber,
-            Email = email
+            Email = email,
+            IsActive = true
         };
+    }
+    
+    public void UpdateLawyerActivity(bool isActive)
+    {
+        if(IsActive == isActive)
+            throw new InvalidOperationException("Cannot update to the same Active state.");
+        
+        IsActive = isActive;
     }
 }

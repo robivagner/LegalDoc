@@ -47,8 +47,8 @@ public class LegalDocument
     
     public void UpdateAiAnalysis(string summary, string clauses, string risks)
     {
-        if (Status == DocumentStatus.InReview ||  Status == DocumentStatus.Completed)
-            throw new InvalidOperationException("Cannot update analysis in review or when completed.");
+        if (Status != DocumentStatus.Uploaded && Status != DocumentStatus.Rejected)
+            throw new InvalidOperationException("AI Analysis update can only be done on Documents with Uploaded or Rejected status.");
         
         Summary = summary;
         Clauses = clauses;

@@ -690,6 +690,33 @@
           "Microsoft.AspNetCore.App"
         ]
       },
+      "SharpGrip.FluentValidation.AutoValidation.Mvc/2.0.0": {
+        "type": "package",
+        "dependencies": {
+          "SharpGrip.FluentValidation.AutoValidation.Shared": "2.0.0"
+        },
+        "compile": {
+          "lib/net10.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll": {}
+        },
+        "runtime": {
+          "lib/net10.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "SharpGrip.FluentValidation.AutoValidation.Shared/2.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FluentValidation": "10.0.0"
+        },
+        "compile": {
+          "lib/net10.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll": {}
+        },
+        "runtime": {
+          "lib/net10.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll": {}
+        }
+      },
       "Swashbuckle.AspNetCore/10.1.4": {
         "type": "package",
         "dependencies": {
@@ -2706,6 +2733,36 @@
         "scalar.aspnetcore.nuspec"
       ]
     },
+    "SharpGrip.FluentValidation.AutoValidation.Mvc/2.0.0": {
+      "sha512": "QnTKNfcx4JzvMR/+hzqWFaXQgrbDSAU/xB9LVgh2povFQpySHTZH4gknulpNy2Hk6ELPy6YpglkEIS3P4E9IMA==",
+      "type": "package",
+      "path": "sharpgrip.fluentvalidation.autovalidation.mvc/2.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net10.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll",
+        "lib/net8.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll",
+        "lib/net9.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll",
+        "sharpgrip.fluentvalidation.autovalidation.mvc.2.0.0.nupkg.sha512",
+        "sharpgrip.fluentvalidation.autovalidation.mvc.nuspec"
+      ]
+    },
+    "SharpGrip.FluentValidation.AutoValidation.Shared/2.0.0": {
+      "sha512": "0DWoin27wm38K/O0zVS5yeWJld2eg588B+4wJSmVlISrOj3kGwRmWCEXFR8lTNWFnKpXHNOtrIo1vdZnhkhzQg==",
+      "type": "package",
+      "path": "sharpgrip.fluentvalidation.autovalidation.shared/2.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net10.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll",
+        "lib/net8.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll",
+        "lib/net9.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll",
+        "sharpgrip.fluentvalidation.autovalidation.shared.2.0.0.nupkg.sha512",
+        "sharpgrip.fluentvalidation.autovalidation.shared.nuspec"
+      ]
+    },
     "Swashbuckle.AspNetCore/10.1.4": {
       "sha512": "3y9YcUdzND3E21NiGvhxEVw2/rdQSbSLDOxrAMP96ZCaDVeB8b30L8QeWA9cfkxfyeXt+F2t1umKE0kaPxm4FA==",
       "type": "package",
@@ -2995,6 +3052,7 @@
       "Microsoft.AspNetCore.OpenApi >= 10.0.3",
       "Microsoft.EntityFrameworkCore.Design >= 10.0.5",
       "Scalar.AspNetCore >= 2.0.14",
+      "SharpGrip.FluentValidation.AutoValidation.Mvc >= 2.0.0",
       "Swashbuckle.AspNetCore >= 10.1.4"
     ]
   },
@@ -3072,6 +3130,10 @@
           "Scalar.AspNetCore": {
             "target": "Package",
             "version": "[2.0.14, )"
+          },
+          "SharpGrip.FluentValidation.AutoValidation.Mvc": {
+            "target": "Package",
+            "version": "[2.0.0, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

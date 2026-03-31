@@ -2,7 +2,7 @@
 
 public class Registry
 {
-    public Registry()
+    private Registry()
     {
         
     }
