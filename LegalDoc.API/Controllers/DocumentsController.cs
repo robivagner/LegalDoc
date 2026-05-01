@@ -1,5 +1,5 @@
-﻿using LegalDoc.Application.Documents.Commands;
-using LegalDoc.Application.Documents.Queries;
+﻿using LegalDoc.Application.Document.Commands;
+using LegalDoc.Application.Document.Queries;
 using LegalDoc.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -27,9 +27,9 @@ public class DocumentsController(IMediator mediator) : ControllerBase
     }
     
     [HttpPatch("{documentId}/ai-analysis")]
-    public async Task<IActionResult> UpdateAiAnalysis(Guid documentId, [FromBody] AiAnalysisRequest request)
+    public async Task<IActionResult> UpdateAiAnalysis(Guid documentId, [FromBody] AiAnalysisResponse request)
     {
-        var command = new UpdateDocumentAiAnalysisCommand(documentId, request.Summary, request.Clauses, request.Risks);
+        var command = new UpdateDocumentAiAnalysisCommand(documentId);
         await mediator.Send(command);
         return NoContent();
     }

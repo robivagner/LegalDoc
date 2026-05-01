@@ -16,6 +16,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegalDoc.Infrastructure", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegalDoc.API", "LegalDoc.API\LegalDoc.API.csproj", "{98BBDBAA-C5AF-4129-B24F-885796DD2A5C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Python", "Python", "{4740415B-90DA-4A50-A60D-865987D5FC14}"
+	ProjectSection(SolutionItems) = preProject
+		Python\main.py = Python\main.py
+		Python\Dockerfile = Python\Dockerfile
+		Python\analyzer.py = Python\analyzer.py
+		Python\requirements.txt = Python\requirements.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{5F2525AB-BB15-41A1-9DDE-CBB0E056378F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegalDoc.Web", "LegalDoc.Web\LegalDoc.Web.csproj", "{907F0458-6065-4270-8C90-12C7515445C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegalDoc.Tests.Unit", "LegalDoc.Tests.Unit\LegalDoc.Tests.Unit.csproj", "{22B8F78D-3A02-42CE-8D7F-A35259D31670}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegalDoc.Tests.Integration", "LegalDoc.Tests.Integration\LegalDoc.Tests.Integration.csproj", "{68E1DDC0-9866-4E2E-9E26-48BF47808B66}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +54,18 @@ Global
 		{98BBDBAA-C5AF-4129-B24F-885796DD2A5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98BBDBAA-C5AF-4129-B24F-885796DD2A5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98BBDBAA-C5AF-4129-B24F-885796DD2A5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{907F0458-6065-4270-8C90-12C7515445C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{907F0458-6065-4270-8C90-12C7515445C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{907F0458-6065-4270-8C90-12C7515445C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{907F0458-6065-4270-8C90-12C7515445C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22B8F78D-3A02-42CE-8D7F-A35259D31670}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22B8F78D-3A02-42CE-8D7F-A35259D31670}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22B8F78D-3A02-42CE-8D7F-A35259D31670}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22B8F78D-3A02-42CE-8D7F-A35259D31670}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68E1DDC0-9866-4E2E-9E26-48BF47808B66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68E1DDC0-9866-4E2E-9E26-48BF47808B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68E1DDC0-9866-4E2E-9E26-48BF47808B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68E1DDC0-9866-4E2E-9E26-48BF47808B66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3AA1F466-72F6-4610-9F11-7DF6A6491644} = {11B2249E-66A5-41A6-9106-D9D8550BDA68}

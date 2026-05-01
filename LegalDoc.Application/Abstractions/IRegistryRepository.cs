@@ -1,5 +1,4 @@
-﻿
-namespace LegalDoc.Application.Abstractions;
+﻿namespace LegalDoc.Application.Abstractions;
 
 public interface IRegistryRepository
 {

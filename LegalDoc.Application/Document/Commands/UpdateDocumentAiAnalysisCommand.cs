@@ -1,5 +1,5 @@
 ﻿using MediatR;
 
-namespace LegalDoc.Application.Documents.Commands;
+namespace LegalDoc.Application.Document.Commands;
 
-public record UpdateDocumentAiAnalysisCommand(Guid DocumentId, string Summary, string Clauses, string Risks) : IRequest;
+public record UpdateDocumentAiAnalysisCommand(Guid DocumentId) : IRequest;

@@ -3,6 +3,7 @@ using LegalDoc.Infrastructure.Persistence;
 using LegalDoc.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
+using LegalDoc.Infrastructure.Services;
 using Microsoft.OpenApi;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
@@ -39,6 +40,7 @@ builder.Services.AddScoped<IDocumentsRepository, DocumentsRepository>();
 builder.Services.AddScoped<IRegistryRepository, RegistryRepository>();
 builder.Services.AddScoped<ILawyerRepository, LawyerRepository>();
 builder.Services.AddScoped<IReviewTaskRepository, ReviewTaskRepository>();
+builder.Services.AddHttpClient<IAiService, AiService>();
 
 var app = builder.Build();
 

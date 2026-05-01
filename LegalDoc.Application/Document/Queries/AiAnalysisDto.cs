@@ -1,3 +1,9 @@
-﻿namespace LegalDoc.Application.Documents.Queries;
+﻿namespace LegalDoc.Application.Document.Queries;
 
-public record AiAnalysisRequest(string Summary, string Clauses, string Risks);
+public record AiAnalysisRequest(string Text);
+
+public record AiAnalysisResponse(
+    string Summary,
+    string Clauses,
+    string Risks
+);

@@ -1,5 +1,5 @@
 ﻿using MediatR;
 
-namespace LegalDoc.Application.Documents.Commands;
+namespace LegalDoc.Application.Document.Commands;
 
-public record UploadDocumentCommand(string Title, string FileName, string StoragePath, Guid RegistryId) : IRequest<Guid>;
+public record UploadDocumentCommand(string Title, string FileName, string StoragePath, string Content, Guid RegistryId) : IRequest<Guid>;

@@ -1,9 +1,9 @@
 ﻿using LegalDoc.Application.Abstractions;
 using MediatR;
 
-namespace LegalDoc.Application.Documents.Commands;
+namespace LegalDoc.Application.Document.Commands;
 
-public class UpdateDocumentAiAnalysisCommandHandler(IDocumentsRepository repository) : IRequestHandler<UpdateDocumentAiAnalysisCommand>
+public class UpdateDocumentAiAnalysisCommandHandler(IDocumentsRepository repository, IAiService aiService) : IRequestHandler<UpdateDocumentAiAnalysisCommand>
 {
     public async Task Handle(UpdateDocumentAiAnalysisCommand request, CancellationToken cancellationToken)
     {
@@ -12,7 +12,10 @@ public class UpdateDocumentAiAnalysisCommandHandler(IDocumentsRepository reposit
         if (document == null)
             throw new Exception("Document not found.");
         
-        document.UpdateAiAnalysis(request.Summary, request.Clauses, request.Risks);
+        var analysis = await aiService.AnalyzeDocumentAsync(document.Content);
+        
+        if (analysis != null)
+            document.UpdateAiAnalysis(analysis.Summary, analysis.Clauses, analysis.Risks);
 
         await repository.UpdateAsync(document, cancellationToken);
     }

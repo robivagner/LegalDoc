@@ -1,7 +1,7 @@
 ﻿using LegalDoc.Application.Abstractions;
 using MediatR;
 
-namespace LegalDoc.Application.Documents.Queries;
+namespace LegalDoc.Application.Document.Queries;
 
 public class GetDocumentsQueryHandler(IDocumentsRepository repository)
     : IRequestHandler<GetDocumentsQuery, List<DocumentDto>>

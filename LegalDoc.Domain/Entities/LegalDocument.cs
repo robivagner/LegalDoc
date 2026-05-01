@@ -15,13 +15,14 @@ public class LegalDocument
     public string Title { get; private set; } = null!;
     public string FileName { get; private set; } = null!;
     public string StoragePath { get; private set; } = null!;
+    public string Content { get; private set; } = null!;
     public string? Summary { get; private set; }
     public string? Clauses { get; private set; }
     public string? Risks { get; private set; }
     public DocumentStatus Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    public static LegalDocument Create(string title, string fileName, string storagePath, Guid registryId)
+    public static LegalDocument Create(string title, string fileName, string storagePath, string content, Guid registryId)
     {
         if (string.IsNullOrEmpty(title))
         {
@@ -39,6 +40,7 @@ public class LegalDocument
             Title = title,
             FileName = fileName,
             StoragePath = storagePath,
+            Content = content,
             Status = DocumentStatus.Uploaded,
             CreatedAt = DateTime.UtcNow,
             RegistryId =  registryId

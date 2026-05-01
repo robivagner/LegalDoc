@@ -2,7 +2,7 @@
 using LegalDoc.Domain.Entities;
 using MediatR;
 
-namespace LegalDoc.Application.Documents.Commands;
+namespace LegalDoc.Application.Document.Commands;
 
 public sealed class UploadDocumentCommandHandler(IDocumentsRepository documentRepository, IRegistryRepository registryRepository)
     : IRequestHandler<UploadDocumentCommand, Guid>
@@ -18,7 +18,7 @@ public sealed class UploadDocumentCommandHandler(IDocumentsRepository documentRe
         
         registry.DocumentAdded();
         
-        var document = LegalDocument.Create(request.Title, request.FileName, request.StoragePath, request.RegistryId);
+        var document = LegalDocument.Create(request.Title, request.FileName, request.StoragePath, request.Content, request.RegistryId);
         await documentRepository.AddAsync(document, cancellationToken);
         return document.Id;
     }

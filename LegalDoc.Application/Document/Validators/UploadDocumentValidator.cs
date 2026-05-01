@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using LegalDoc.Application.Documents.Commands;
+using LegalDoc.Application.Document.Commands;
 
-namespace LegalDoc.Application.Documents.Validators;
+namespace LegalDoc.Application.Document.Validators;
 
 public class UploadDocumentValidator : AbstractValidator<UploadDocumentCommand>
 {
