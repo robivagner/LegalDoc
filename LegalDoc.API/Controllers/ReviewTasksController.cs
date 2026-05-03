@@ -2,6 +2,7 @@
 using LegalDoc.Application.ReviewTask.Queries;
 using LegalDoc.Domain.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LegalDoc.API.Controllers;
@@ -10,6 +11,7 @@ namespace LegalDoc.API.Controllers;
 [Route("api/v1/review-tasks")]
 public class ReviewTasksController(IMediator mediator) : ControllerBase
 {
+    [Authorize(Roles = "Lawyer")]
     [HttpPost]
     public async Task<IActionResult> AssignTask([FromBody] AssignReviewTaskCommand command)
     {
@@ -25,6 +27,7 @@ public class ReviewTasksController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
     
+    [Authorize(Roles = "Lawyer")]
     [HttpPatch("{reviewTaskId}/review-task-status")]
     public async Task<IActionResult> UpdateReviewTaskStatus(Guid reviewTaskId, [FromQuery] ReviewTaskStatus status)
     {
@@ -32,6 +35,7 @@ public class ReviewTasksController(IMediator mediator) : ControllerBase
         return NoContent();
     }
     
+    [Authorize(Roles = "Admin")]
     [HttpPatch("{reviewTaskId}/review-task-lawyer")]
     public async Task<IActionResult> UpdateReviewTaskLawyer(Guid reviewTaskId, [FromQuery] Guid newLawyerId)
     {

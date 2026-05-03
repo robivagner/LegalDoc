@@ -21,7 +21,7 @@
 @code {
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     
-    private RegistryDto _model = new() { Capacity = 100 }; // Valoare default
+    private RegistryDto _model = new() { Capacity = 100 };
 
     private void Cancel() => MudDialog.Cancel();
 

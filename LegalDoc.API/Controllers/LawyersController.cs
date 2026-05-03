@@ -1,6 +1,7 @@
 ﻿using LegalDoc.Application.Lawyer.Commands;
 using LegalDoc.Application.Lawyer.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LegalDoc.API.Controllers;
@@ -25,6 +26,7 @@ public class LawyersController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
     
+    [Authorize(Roles = "Admin")]
     [HttpPatch("{lawyerId}/lawyer-activity")]
     public async Task<IActionResult> UpdateLawyerActivity(Guid lawyerId, [FromQuery] bool isActive)
     {

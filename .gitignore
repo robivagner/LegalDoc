@@ -4,4 +4,8 @@
 .vs/
 .idea/
 .env
+*.env
+venv/
+.venv/
+env/
 LegalDoc.API/DocumentsArchive/

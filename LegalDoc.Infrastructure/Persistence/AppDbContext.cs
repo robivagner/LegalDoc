@@ -1,9 +1,10 @@
 ﻿using LegalDoc.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace LegalDoc.Infrastructure.Persistence;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext(options)
 {
     public DbSet<LegalDocument> LegalDocuments => Set<LegalDocument>();
     public DbSet<Registry> Registries => Set<Registry>();
@@ -12,6 +13,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        
         modelBuilder.Entity<LegalDocument>(e =>
         {
             e.HasKey(d => d.Id);
@@ -53,7 +56,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasOne<LegalDocument>().WithMany().HasForeignKey(t => t.DocumentId);
             e.HasOne<Lawyer>().WithMany().HasForeignKey(t => t.LawyerId);
         });
-        
-        base.OnModelCreating(modelBuilder);
     }
 }

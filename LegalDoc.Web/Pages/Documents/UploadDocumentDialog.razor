@@ -23,15 +23,22 @@
             }
         </MudSelect>
         
-        <MudFileUpload T="IBrowserFile" FilesChanged="OnFileChanged" Context="fileContext" Class="mt-6">
+        <MudFileUpload T="IBrowserFile" FilesChanged="OnFileChanged" Class="mt-4">
             <ActivatorContent>
                 <MudButton Variant="Variant.Filled"
-                           Color="Color.Secondary"
+                           Color="Color.Primary"
                            StartIcon="@Icons.Material.Filled.CloudUpload">
-                    @( _file == null ? "Alege fișier PDF" : _file.Name)
+                    @* Afișăm numele fișierului dacă este selectat, altfel un text generic *@
+                    @(_file == null ? "Alege fișierul juridic" : _file.Name)
                 </MudButton>
             </ActivatorContent>
         </MudFileUpload>
+        @if (_file != null)
+        {
+            <MudText Typo="Typo.caption" Color="Color.Success" Class="mt-2">
+                Fișier pregătit: @_file.Name (@($"{_file.Size / 1024.0:F2} KB"))
+            </MudText>
+        }
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Anulează</MudButton>
@@ -46,7 +53,7 @@
 
 @code {
     [CascadingParameter] 
-    IMudDialogInstance MudDialog { get; set; } = default!; // Am schimbat în IMudDialogInstance (interfața preferată)
+    IMudDialogInstance MudDialog { get; set; } = default!;
     
     private string _title = "";
     private Guid? _selectedRegistryId;
@@ -65,7 +72,15 @@
         }
     }
 
-    private void OnFileChanged(IBrowserFile file) => _file = file;
+    private void OnFileChanged(IBrowserFile file)
+    {
+        _file = file;
+        if (string.IsNullOrWhiteSpace(_title) && _file != null)
+        {
+            _title = Path.GetFileNameWithoutExtension(_file.Name);
+        }
+        StateHasChanged();
+    }
 
     private void Cancel() => MudDialog.Cancel();
 

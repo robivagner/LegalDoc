@@ -2,6 +2,7 @@
 using LegalDoc.Application.Document.Queries;
 using LegalDoc.Domain.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LegalDoc.API.Controllers;
@@ -10,6 +11,7 @@ namespace LegalDoc.API.Controllers;
 [Route("api/v1/documents")]
 public class DocumentsController(IMediator mediator) : ControllerBase
 {
+    [Authorize(Roles = "Lawyer")]
     [HttpPost]
     public async Task<IActionResult> UploadDocument([FromForm] UploadDocumentRequest request)
     {
@@ -59,6 +61,7 @@ public class DocumentsController(IMediator mediator) : ControllerBase
         return File(bytes, "application/pdf", document.FileName);
     }
     
+    [Authorize(Roles = "Lawyer")]
     [HttpPatch("{documentId}/ai-analysis")]
     public async Task<IActionResult> UpdateAiAnalysis([FromRoute] Guid documentId)
     {

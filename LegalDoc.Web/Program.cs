@@ -5,6 +5,8 @@ using MudBlazor.Services;
 using Fluxor;
 using LegalDoc.Web.Services;
 using LegalDoc.Web.State;
+using Microsoft.AspNetCore.Components.Authorization;
+using LegalDoc.Web.Auth;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -20,6 +22,9 @@ builder.Services.AddScoped<RegistryService>();
 builder.Services.AddScoped<LawyerService>();
 builder.Services.AddScoped<ReviewTaskService>();
 builder.Services.AddScoped<AppState>();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddMudServices();
 builder.Services.AddFluxor(options => options.ScanAssemblies(typeof(Program).Assembly));

@@ -1,0 +1,69 @@
+﻿@page "/login"
+@using LegalDoc.Web.Models
+@using LegalDoc.Web.Services
+@using LegalDoc.Web.Auth
+@inject AuthService AuthService
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+@inject AuthenticationStateProvider AuthProvider
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center justify-center" Style="height: 80vh;">
+    <MudPaper Elevation="4" Class="pa-8" Style="width: 100%; max-width: 400px; border-radius: 16px;">
+        <div class="d-flex flex-column align-center mb-6">
+            <MudIcon Icon="@Icons.Material.Filled.Lock" Color="Color.Primary" Size="Size.Large" Class="mb-2" />
+            <MudText Typo="Typo.h4" Style="font-weight: 800;">Autentificare</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">LegalDoc AI Management</MudText>
+        </div>
+
+        <MudTextField @bind-Value="_model.Email" Label="Email" Variant="Variant.Outlined" 
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" Class="mb-4" />
+        
+        <MudTextField @bind-Value="_model.Password" Label="Parolă" Variant="Variant.Outlined" 
+                      InputType="InputType.Password" Adornment="Adornment.Start" 
+                      AdornmentIcon="@Icons.Material.Filled.Password" Class="mb-6" />
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" 
+                   FullWidth="true" OnClick="HandleLogin" Disabled="_loading" Style="border-radius: 8px;">
+            @if (_loading)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Se verifică...</MudText>
+            }
+            else
+            {
+                <MudText>Logare</MudText>
+            }
+        </MudButton>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private LoginRequest _model = new();
+    private bool _loading = false;
+
+    private async Task HandleLogin()
+    {
+        if (string.IsNullOrWhiteSpace(_model.Email) || string.IsNullOrWhiteSpace(_model.Password))
+        {
+            Snackbar.Add("Te rugăm să completezi toate câmpurile.", Severity.Warning);
+            return;
+        }
+
+        _loading = true;
+        var success = await AuthService.LoginAsync(_model);
+        
+        if (success)
+        {
+            // Anunțăm sistemul că avem un user nou
+            ((CustomAuthStateProvider)AuthProvider).NotifyUserLogin(_model.Email);
+            
+            Snackbar.Add("Autentificare reușită!", Severity.Success);
+            Nav.NavigateTo("/");
+        }
+        else
+        {
+            Snackbar.Add("Email sau parolă incorectă.", Severity.Error);
+        }
+        _loading = false;
+    }
+}
