@@ -31,7 +31,7 @@ public class DocumentQueryIntegrationTests
         var handler = new GetDocumentsQueryHandler(repo);
         
         // Cautam doar cele Completed
-        var query = new GetDocumentsQuery(DocumentStatus.Completed);
+        var query = new GetDocumentsQuery(Status: DocumentStatus.Completed);
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);

@@ -3,4 +3,4 @@ using MediatR;
 
 namespace LegalDoc.Application.Document.Queries;
 
-public record GetDocumentsQuery(DocumentStatus? Status, Guid? RegistryId = null) : IRequest<List<DocumentDto>>;
+public record GetDocumentsQuery(Guid? DocumentId = null, Guid? RegistryId = null, DocumentStatus? Status = null) : IRequest<List<DocumentDto>>;

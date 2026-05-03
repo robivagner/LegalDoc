@@ -1,0 +1,41 @@
+﻿@using LegalDoc.Web.Models
+@using LegalDoc.Web.Services
+@inject RegistryService RegService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Adăugare Registru Nou</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="_model.Name" Label="Nume Registru" Required="true" />
+        <MudTextField @bind-Value="_model.Location" Label="Locație (ex: Etaj 2, Arhiva Nord)" Class="mt-4" />
+        <MudNumericField @bind-Value="_model.Capacity" Label="Capacitate Documente" Min="1" Class="mt-4" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Anulează</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">Salvează</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+    
+    private RegistryDto _model = new() { Capacity = 100 }; // Valoare default
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task Submit()
+    {
+        try
+        {
+            await RegService.CreateRegistryAsync(_model);
+            Snackbar.Add("Registru creat cu succes!", Severity.Success);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Eroare la salvare: " + ex.Message, Severity.Error);
+        }
+    }
+}

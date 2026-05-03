@@ -14,8 +14,10 @@ public class UpdateDocumentAiAnalysisCommandHandler(IDocumentsRepository reposit
         
         var analysis = await aiService.AnalyzeDocumentAsync(document.Content);
         
-        if (analysis != null)
-            document.UpdateAiAnalysis(analysis.Summary, analysis.Clauses, analysis.Risks);
+        if (analysis == null)
+            throw new Exception("AI analysis error.");
+        
+        document.UpdateAiAnalysis(analysis.Summary, analysis.Clauses, analysis.Risks);
 
         await repository.UpdateAsync(document, cancellationToken);
     }

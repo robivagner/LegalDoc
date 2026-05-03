@@ -1,6 +1,6 @@
 ﻿namespace LegalDoc.Application.Document.Queries;
 
-public record AiAnalysisRequest(string Text);
+public record AiAnalysisRequest(string Content);
 
 public record AiAnalysisResponse(
     string Summary,

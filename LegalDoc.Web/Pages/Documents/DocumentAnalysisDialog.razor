@@ -1,0 +1,49 @@
+﻿@using LegalDoc.Web.Models
+
+<MudDialog>
+    <DialogContent>
+        @* Folosim max-height pentru a nu forța o fereastră imensă dacă textul e scurt *@
+        <MudGrid Style="max-height: 80vh; overflow-y: auto;">
+
+            @* FIX: Am pus xs="12" și am șters md="5" pentru a ocupa TOATĂ lățimea dialogului *@
+            <MudItem xs="12" Class="pa-6">
+                <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4" Style="font-weight: bold;">Analiză Inteligentă</MudText>
+                
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-6">
+                    Analiza a fost generată automat pe baza conținutului extras.
+                </MudAlert>
+
+                <MudText Typo="Typo.subtitle1" Style="font-weight: bold;">Rezumat Executiv</MudText>
+                <MudText Typo="Typo.body2" Class="mb-6" Style="line-height: 1.6;">
+                    @Document.Summary
+                </MudText>
+
+                <MudDivider Class="my-4" />
+
+                <MudText Typo="Typo.subtitle1" Style="font-weight: bold;" Color="Color.Error">Riscuri Identificate</MudText>
+                <MudText Typo="Typo.body2" Class="mb-6">
+                    @Document.Risks
+                </MudText>
+
+                <MudDivider Class="my-4" />
+
+                <MudText Typo="Typo.subtitle1" Style="font-weight: bold;" Color="Color.Primary">Clauze Cheie</MudText>
+                <div class="pa-3 mud-inherit-content mud-paper-outlined">
+                    <MudText Typo="Typo.body2" Style="white-space: pre-wrap; font-family: monospace; font-size: 0.85rem;">
+                        @Document.Clauses
+                    </MudText>
+                </div>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Close">Închide</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public DocumentDto Document { get; set; } = null!;
+
+    private void Close() => MudDialog.Close();
+}

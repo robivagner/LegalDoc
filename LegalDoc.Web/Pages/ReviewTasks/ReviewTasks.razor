@@ -1,0 +1,308 @@
+﻿@page "/tasks"
+@using LegalDoc.Web.Models
+@using LegalDoc.Web.Services
+@inject ReviewTaskService TaskService
+@inject LawyerService LawyerService
+@inject DocumentService DocService 
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject State.AppState AppState
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-16 mt-6">
+    @* --- HEADER ȘI BUTOANE --- *@
+    <div class="d-flex align-center mb-6">
+        <MudText Typo="Typo.h4" Color="Color.Primary" Style="font-weight: 700">Review Tasks</MudText>
+        <MudSpacer />
+        
+        <MudToggleIconButton @bind-Toggled="@_filtersVisible"
+                             Icon="@Icons.Material.Filled.FilterList"
+                             Color="Color.Default"
+                             ToggledIcon="@Icons.Material.Filled.FilterListOff"
+                             ToggledColor="Color.Secondary"
+                             Title="Filtrează task-uri"
+                             Class="mr-2" />
+
+        <MudButton Variant="Variant.Filled" 
+                   Color="Color.Secondary" 
+                   OnClick="OpenCreateDialog"
+                   StartIcon="@Icons.Material.Filled.AssignmentInd">
+            Asignează Task
+        </MudButton>
+    </div>
+
+    @* --- PANEL FILTRE --- *@
+    <MudCollapse Expanded="_filtersVisible">
+        <MudPaper Elevation="2" Class="pa-4 mb-6 border-solid border-2 mud-border-secondary">
+            <MudGrid>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudTextField @bind-Value="_searchDescription" Placeholder="Caută descriere..." 
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Description" 
+                                  Clearable="true" Immediate="true" Label="Descriere Task" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudTextField @bind-Value="_searchDocumentTitle" Placeholder="Caută document..." 
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.InsertDriveFile" 
+                                  Clearable="true" Immediate="true" Label="Nume Document" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="2">
+                    <MudTextField @bind-Value="_searchLawyerName" Placeholder="Caută avocat..." 
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" 
+                                  Clearable="true" Immediate="true" Label="Nume Avocat" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="2">
+                    <MudSelect T="string" Label="Status" @bind-Value="_searchStatus" Clearable="true">
+                        <MudSelectItem Value="@("")">Toate</MudSelectItem>
+                        <MudSelectItem Value="@("Created")">Created</MudSelectItem>
+                        <MudSelectItem Value="@("Completed")">Completed</MudSelectItem>
+                        <MudSelectItem Value="@("Rejected")">Rejected</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="2">
+                    <MudTextField @bind-Value="_searchId" Placeholder="ID Task..." 
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Fingerprint" 
+                                  Clearable="true" Immediate="true" Label="ID Task" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudCollapse>
+
+    @* --- TABEL PRINCIPAL --- *@
+    <MudTable Items="@FilteredTasks" 
+              Hover="true" 
+              Elevation="4" 
+              Loading="@_loading" 
+              Striped="true"
+              SortLabel="Sortează după">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<ReviewTaskDto, object>(x => x.Description ?? string.Empty)">Descriere</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ReviewTaskDto, object>(x => GetDocumentTitle(x.DocumentId))">Nume Document</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ReviewTaskDto, object>(x => GetLawyerName(x.LawyerId))">Avocat Asignat</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<ReviewTaskDto, object>(x => x.AssignedAt)">Data Asignării</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ReviewTaskDto, object>(x => x.Status)">Status</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ReviewTaskDto, object>(x => x.Id)">ID Task</MudTableSortLabel></MudTh>
+            <MudTh Style="text-align: right">Acțiuni</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Descriere">
+                <MudText Typo="Typo.body2" Style="max-width: 250px;" Class="mud-text-truncate">
+                    @(string.IsNullOrWhiteSpace(context.Description) ? "-" : context.Description)
+                </MudText>
+            </MudTd>
+            
+            <MudTd DataLabel="Nume Document">
+                <MudText Typo="Typo.body2" Style="font-weight: 500;">
+                    @GetDocumentTitle(context.DocumentId)
+                </MudText>
+            </MudTd>
+
+            <MudTd DataLabel="Avocat Asignat">
+                <div class="d-flex align-center gap-2">
+                    <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small" Color="Color.Primary"/>
+                    <MudText Typo="Typo.body2">@GetLawyerName(context.LawyerId)</MudText>
+                </div>
+            </MudTd>
+
+            <MudTd DataLabel="Data Asignării">
+                @context.AssignedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
+            </MudTd>
+
+            <MudTd DataLabel="Status">
+                <MudChip T="string" Color="@GetStatusColor(context.Status)" Size="Size.Small" Variant="Variant.Filled" Style="font-weight: 600; min-width: 90px; justify-content: center;">
+                    @context.Status
+                </MudChip>
+            </MudTd>
+            
+            <MudTd DataLabel="ID Task">
+                <MudText Typo="Typo.caption" Style="font-family: monospace; color: gray;">
+                    @context.Id
+                </MudText>
+            </MudTd>
+
+            <MudTd DataLabel="Acțiuni" Style="text-align: right">
+                @{ var isFinished = context.Status == "Completed" || context.Status == "Rejected"; }
+
+                @* Buton 1: Evaluează Task-ul (Aprobă/Respinge) *@
+                <MudTooltip Text="Evaluează Analiza AI">
+                    <MudIconButton Icon="@Icons.Material.Filled.RateReview" 
+                                   Color="Color.Info" 
+                                   Size="Size.Small" 
+                                   Disabled="@isFinished"
+                                   OnClick="@(() => OpenReviewDialog(context))" />
+                </MudTooltip>
+
+                @* Buton 2: Reasignează *@
+                <MudTooltip Text="Reasignează Avocat">
+                    <MudIconButton Icon="@Icons.Material.Filled.SwapHoriz" 
+                                   Color="Color.Warning" 
+                                   Size="Size.Small" 
+                                   Disabled="@isFinished"
+                                   OnClick="@(() => OpenReassignDialog(context))" />
+                </MudTooltip>
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body1">Nu a fost găsit niciun task care să corespundă criteriilor.</MudText>
+        </NoRecordsContent>
+    </MudTable>
+</MudContainer>
+
+@code {
+    private List<ReviewTaskDto> _tasks = new();
+    private List<LawyerDto> _lawyers = new();
+    private List<DocumentDto> _documents = new(); 
+    private bool _loading = true;
+
+    // --- State Filtre ---
+    private bool _filtersVisible = false;
+    private string _searchDescription = "";
+    private string _searchDocumentTitle = "";
+    private string _searchLawyerName = "";
+    private string _searchStatus = "";
+    private string _searchId = "";
+
+    // --- Proprietate calculată pentru filtrare realtime ---
+    private IEnumerable<ReviewTaskDto> FilteredTasks => _tasks.Where(t =>
+    {
+        if (!string.IsNullOrWhiteSpace(_searchDescription) && (t.Description == null || !t.Description.Contains(_searchDescription, StringComparison.OrdinalIgnoreCase)))
+            return false;
+        
+        if (!string.IsNullOrWhiteSpace(_searchDocumentTitle) && !GetDocumentTitle(t.DocumentId).Contains(_searchDocumentTitle, StringComparison.OrdinalIgnoreCase))
+            return false;
+        
+        if (!string.IsNullOrWhiteSpace(_searchLawyerName) && !GetLawyerName(t.LawyerId).Contains(_searchLawyerName, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(_searchStatus) && t.Status != _searchStatus)
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(_searchId) && !t.Id.ToString().Contains(_searchId, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        return true;
+    });
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try 
+        {
+            _loading = true;
+            
+            var tasksTask = TaskService.GetTasksAsync();
+            var lawyersTask = LawyerService.GetLawyersAsync();
+            var docsTask = DocService.GetDocumentsAsync();
+            
+            await Task.WhenAll(tasksTask, lawyersTask, docsTask);
+
+            _tasks = tasksTask.Result;
+            _lawyers = lawyersTask.Result;
+            _documents = docsTask.Result;
+            
+            var pendingCount = _tasks.Count(t => t.Status == "Created");
+            AppState.UpdatePendingTasks(pendingCount);
+        }
+        catch (Exception ex) 
+        {
+            Snackbar.Add("Eroare la încărcare: " + ex.Message, Severity.Error);
+        }
+        finally 
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task UpdateStatus(ReviewTaskDto task, string newStatus)
+    {
+        try
+        {
+            await TaskService.UpdateTaskStatusAsync(task.Id, newStatus);
+            await LoadData();
+            Snackbar.Add("Status actualizat cu succes!", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Eroare la actualizare: " + ex.Message, Severity.Error);
+        }
+    }
+    
+    private string GetLawyerName(Guid lawyerId)
+    {
+        var lawyer = _lawyers.FirstOrDefault(l => l.Id == lawyerId);
+        return lawyer != null ? lawyer.Name : "Avocat Necunoscut";
+    }
+
+    private string GetDocumentTitle(Guid docId)
+    {
+        var doc = _documents.FirstOrDefault(d => d.Id == docId);
+        return doc != null ? doc.Title : "Document Șters/Necunoscut";
+    }
+    
+    private Color GetStatusColor(string status) => status switch
+    {
+        "Created" => Color.Default,
+        "Completed" => Color.Success,
+        "Rejected" => Color.Error,
+        _ => Color.Surface
+    };
+    
+    private async Task OpenReviewDialog(ReviewTaskDto task)
+    {
+        var doc = _documents.FirstOrDefault(d => d.Id == task.DocumentId);
+        if (doc == null)
+        {
+            Snackbar.Add("Eroare: Documentul asociat nu a fost găsit.", Severity.Error);
+            return;
+        }
+
+        var parameters = new DialogParameters
+        {
+            { "Document", doc },
+            { "Task", task }
+        };
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        
+        var dialog = await DialogService.ShowAsync<ReviewTaskDialog>("Evaluare Task și Analiză AI", parameters, options);
+        var result = await dialog.Result;
+        
+        if (result is not null && !result.Canceled && result.Data is string selectedStatus)
+        {
+            await UpdateStatus(task, selectedStatus);
+        }
+    }
+
+    private async Task OpenCreateDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, MaxWidth = MaxWidth.Small };
+        var dialog = await DialogService.ShowAsync<AssignTaskDialog>("Creare Task Nou", options);
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled)
+        {
+            await LoadData();
+        }
+    }
+    
+    private async Task OpenReassignDialog(ReviewTaskDto task)
+    {
+        var parameters = new DialogParameters
+        {
+            { "TaskId", task.Id },
+            { "CurrentLawyerId", task.LawyerId },
+            { "Lawyers", _lawyers }
+        };
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<ReassignTaskDialog>("Reasignează Task", parameters, options);
+        var result = await dialog.Result;
+        
+        if (result is not null && !result.Canceled)
+        {
+            await LoadData();
+        }
+    }
+}

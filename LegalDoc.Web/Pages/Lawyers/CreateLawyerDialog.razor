@@ -1,0 +1,70 @@
+﻿@using LegalDoc.Web.Services
+@inject LawyerService LawyerSvc
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="_form" @bind-IsValid="@_isValid">
+            <MudTextField T="string" 
+                          Label="Nume complet" 
+                          @bind-Value="_name" 
+                          Required="true" 
+                          RequiredError="Numele este obligatoriu!" />
+                          
+            <MudTextField T="string" 
+                          Label="Număr Barou" 
+                          @bind-Value="_barNumber" 
+                          Required="true" 
+                          RequiredError="Numărul de barou este obligatoriu!" 
+                          Class="mt-4" />
+                          
+            <MudTextField T="string" 
+                          Label="Email" 
+                          @bind-Value="_email" 
+                          Class="mt-4" 
+                          HelperText="Opțional (ex: avocat@firma.ro)" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Anulează</MudButton>
+        <MudButton Color="Color.Primary" 
+                   Variant="Variant.Filled" 
+                   OnClick="Submit" 
+                   Disabled="@(!_isValid)">
+            Salvează
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private MudForm _form = null!;
+    private bool _isValid;
+
+    // Câmpurile formularului
+    private string _name = string.Empty;
+    private string _barNumber = string.Empty;
+    private string? _email;
+
+    private async Task Submit()
+    {
+        await _form.Validate();
+        
+        if (_form.IsValid)
+        {
+            try
+            {
+                await LawyerSvc.CreateLawyerAsync(_name, _barNumber, _email);
+                Snackbar.Add("Avocatul a fost adăugat cu succes!", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add("Eroare la salvare: " + ex.Message, Severity.Error);
+            }
+        }
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

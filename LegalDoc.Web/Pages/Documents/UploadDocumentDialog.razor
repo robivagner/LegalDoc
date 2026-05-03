@@ -1,0 +1,91 @@
+﻿@using LegalDoc.Web.Models
+@using LegalDoc.Web.Services
+@inject RegistryService RegService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.UploadFile" Class="mr-3 mb-n1" />
+            Încărcare Document Juridic
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField T="string" @bind-Value="_title" Label="Titlu Document" Required="true" Margin="Margin.Normal" />
+        
+        <MudSelect T="Guid?" @bind-Value="_selectedRegistryId" Label="Selectează Registrul/Arhiva" AnchorOrigin="Origin.BottomCenter" Required="true" Class="mt-4">
+            @if (_registries != null)
+            {
+                @foreach (var reg in _registries)
+                {
+                    <MudSelectItem T="Guid?" Value="@reg.Id">@reg.Name (@reg.Location)</MudSelectItem>
+                }
+            }
+        </MudSelect>
+        
+        <MudFileUpload T="IBrowserFile" FilesChanged="OnFileChanged" Context="fileContext" Class="mt-6">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload">
+                    @( _file == null ? "Alege fișier PDF" : _file.Name)
+                </MudButton>
+            </ActivatorContent>
+        </MudFileUpload>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Anulează</MudButton>
+        <MudButton Color="Color.Primary" 
+                   Variant="Variant.Filled" 
+                   OnClick="Submit" 
+                   Disabled="@(_file == null || string.IsNullOrEmpty(_title) || _selectedRegistryId == null)">
+            Încarcă
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] 
+    IMudDialogInstance MudDialog { get; set; } = default!; // Am schimbat în IMudDialogInstance (interfața preferată)
+    
+    private string _title = "";
+    private Guid? _selectedRegistryId;
+    private IBrowserFile? _file;
+    private List<RegistryDto> _registries = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try 
+        {
+            _registries = await RegService.GetRegistriesAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Nu am putut încărca registrele: " + ex.Message, Severity.Error);
+        }
+    }
+
+    private void OnFileChanged(IBrowserFile file) => _file = file;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void Submit()
+    {
+        if (_selectedRegistryId.HasValue && _file != null)
+        {
+            var result = new UploadRequest { 
+                Title = _title, 
+                RegistryId = _selectedRegistryId.Value, 
+                File = _file 
+            };
+            MudDialog.Close(DialogResult.Ok(result));
+        }
+    }
+
+    public class UploadRequest
+    {
+        public string Title { get; set; } = "";
+        public Guid RegistryId { get; set; }
+        public IBrowserFile File { get; set; } = default!;
+    }
+}

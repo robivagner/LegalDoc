@@ -2,6 +2,8 @@
 using LegalDoc.Application.Document.Commands;
 using LegalDoc.Domain.Entities;
 using FluentAssertions;
+using LegalDoc.Application.Abstractions;
+using Moq;
 
 namespace LegalDoc.Tests.Integration;
 
@@ -22,13 +24,20 @@ public class DocumentIntegrationTests
 
         var docRepo = new DocumentsRepository(context);
         var regRepo = new RegistryRepository(context);
-        var handler = new UploadDocumentCommandHandler(docRepo, regRepo);
+        var extractorMock = new Mock<IDocumentTextExtractor>();
+        var storageServiceMock = new Mock<IFileStorageService>();
+        extractorMock
+            .Setup(x => x.ExtractTextFromPdf(It.IsAny<string>()))
+            .Returns("Text simulat din PDF pentru test");
+        storageServiceMock
+            .Setup(x => x.SaveFileAsync(It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync("/simulated/path/contract.pdf");
+        var handler = new UploadDocumentCommandHandler(docRepo, regRepo, extractorMock.Object, storageServiceMock.Object);
 
         var command = new UploadDocumentCommand(
             "Contract Inchiriere", 
-            "contract.pdf", 
-            "/storage/docs", 
-            "Content",
+            "contract.pdf",
+            new byte[] { 1 }, 
             registry.Id);
 
         // Act

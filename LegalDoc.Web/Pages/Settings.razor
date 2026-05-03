@@ -1,0 +1,91 @@
+﻿@page "/settings"
+
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pt-16 mt-6">
+    <div class="d-flex align-center mb-6">
+        <MudText Typo="Typo.h4" Color="Color.Primary" Style="font-weight: 700">Setări Sistem</MudText>
+    </div>
+
+    <MudGrid Spacing="4">
+        @* --- Secțiunea APARIȚIE --- *@
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-6" Elevation="3">
+                <MudText Typo="Typo.h6" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.Palette" Class="mr-2" /> Apariție
+                </MudText>
+                
+                <MudDivider Class="mb-4" />
+                
+                <div class="d-flex align-center justify-space-between mb-4">
+                    <div>
+                        <MudText Typo="Typo.body1" Style="font-weight: 500">Mod Întunecat (Dark Mode)</MudText>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">Schimbă tema vizuală a aplicației.</MudText>
+                    </div>
+                    @* Comutatorul este legat la funcția din MainLayout prin CascadingParameter *@
+                    <MudSwitch T="bool" Value="@Layout._isDarkMode" ValueChanged="OnThemeChanged" Color="Color.Primary" />
+                </div>
+            </MudPaper>
+        </MudItem>
+
+        @* --- Secțiunea NOTIFICĂRI --- *@
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-6" Elevation="3">
+                <MudText Typo="Typo.h6" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="mr-2" /> Notificări
+                </MudText>
+                
+                <MudDivider Class="mb-4" />
+                
+                <div class="d-flex align-center justify-space-between mb-4">
+                    <MudText Typo="Typo.body1">Notificări la finalizarea analizei AI</MudText>
+                    <MudSwitch T="bool" @bind-Value="_notifyAiComplete" Color="Color.Primary" />
+                </div>
+                <div class="d-flex align-center justify-space-between">
+                    <MudText Typo="Typo.body1">Alerte la reasignarea sarcinilor</MudText>
+                    <MudSwitch T="bool" @bind-Value="_notifyReassign" Color="Color.Primary" />
+                </div>
+            </MudPaper>
+        </MudItem>
+
+        @* --- Secțiunea DESPRE SISTEM --- *@
+        <MudItem xs="12">
+            <MudPaper Class="pa-6" Elevation="3">
+                <MudText Typo="Typo.h6" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-2" /> Despre LegalDoc AI
+                </MudText>
+                
+                <MudDivider Class="mb-4" />
+                
+                <MudGrid>
+                    <MudItem xs="12" sm="4">
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">Versiune Sistem</MudText>
+                        <MudText Typo="Typo.body1" Style="font-weight: 500">1.0.0 (Build 402)</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="4">
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">Motor AI</MudText>
+                        <MudText Typo="Typo.body1" Style="font-weight: 500">LegalDoc Core v2</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="4">
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">Utilizator Conectat</MudText>
+                        <MudText Typo="Typo.body1" Style="font-weight: 500">Administrator</MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    [CascadingParameter] public MainLayout Layout { get; set; } = null!;
+    
+    private bool _notifyAiComplete = true;
+    private bool _notifyReassign = false;
+    
+    private void OnThemeChanged(bool newValue)
+    {
+        if (Layout != null)
+        {
+            Layout.ToggleDarkMode();
+        }
+    }
+}

@@ -10,11 +10,11 @@ public class UploadDocumentValidatorTests
 
     [Theory]
     [InlineData("document.pdf")]
-    [InlineData("contract.docx")]
+    [InlineData("contract.pdf")]
     public void Validator_Should_NotHaveError_WhenExtensionIsValid(string fileName)
     {
         // Arrange
-        var command = new UploadDocumentCommand("Titlu", fileName, "/path", "Content", Guid.NewGuid());
+        var command = new UploadDocumentCommand("Titlu", fileName, new byte[] {1}, Guid.NewGuid());
 
         // Act
         var result = _validator.TestValidate(command);
@@ -30,7 +30,7 @@ public class UploadDocumentValidatorTests
     public void Validator_Should_HaveError_WhenExtensionIsInvalid(string fileName)
     {
         // Arrange
-        var command = new UploadDocumentCommand("Titlu", fileName, "/path", "Content", Guid.NewGuid());
+        var command = new UploadDocumentCommand("Titlu", fileName, new byte[] {1}, Guid.NewGuid());
 
         // Act
         var result = _validator.TestValidate(command);

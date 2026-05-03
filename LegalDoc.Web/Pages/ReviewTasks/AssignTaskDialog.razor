@@ -1,0 +1,99 @@
+﻿@using LegalDoc.Web.Models
+@using LegalDoc.Web.Services
+@inject ReviewTaskService TaskSvc
+@inject LawyerService LawyerSvc
+@inject DocumentService DocSvc
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="_form" @bind-IsValid="@_isValid">
+            
+            <MudSelect T="Guid" 
+                       Label="Selectează Documentul" 
+                       @bind-Value="_selectedDocumentId" 
+                       Required="true" 
+                       RequiredError="Trebuie să selectezi un document!">
+                @foreach (var doc in _documents.Where(d => d.Status == "AwaitingReview"))
+                {
+                    <MudSelectItem Value="@doc.Id">@doc.Title</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect T="Guid" 
+                       Label="Selectează Avocatul" 
+                       @bind-Value="_selectedLawyerId" 
+                       Required="true" 
+                       RequiredError="Trebuie să selectezi un avocat!" 
+                       Class="mt-4">
+                @* Afișăm în listă doar avocații activi *@
+                @foreach (var lawyer in _lawyers.Where(l => l.IsActive))
+                {
+                    <MudSelectItem Value="@lawyer.Id">@lawyer.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudTextField T="string" 
+                          Label="Descriere / Notițe (Opțional)" 
+                          @bind-Value="_description" 
+                          Lines="3" 
+                          Class="mt-4" />
+                          
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Anulează</MudButton>
+        <MudButton Color="Color.Primary" 
+                   Variant="Variant.Filled" 
+                   OnClick="Submit" 
+                   Disabled="@(!_isValid)">
+            Asignează
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private MudForm _form = null!;
+    private bool _isValid;
+    
+    private Guid _selectedDocumentId;
+    private Guid _selectedLawyerId;
+    private string? _description;
+    
+    private List<LawyerDto> _lawyers = new();
+    private List<DocumentDto> _documents = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var lawyersTask = LawyerSvc.GetLawyersAsync();
+        var docsTask = DocSvc.GetDocumentsAsync();
+        
+        await Task.WhenAll(lawyersTask, docsTask);
+        
+        _lawyers = lawyersTask.Result;
+        _documents = docsTask.Result;
+    }
+
+    private async Task Submit()
+    {
+        await _form.Validate();
+        
+        if (_form.IsValid)
+        {
+            try
+            {
+                await TaskSvc.AssignTaskAsync(_selectedDocumentId, _selectedLawyerId, _description);
+                Snackbar.Add("Task-ul a fost asignat cu succes!", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add("Eroare la asignare: " + ex.Message, Severity.Error);
+            }
+        }
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

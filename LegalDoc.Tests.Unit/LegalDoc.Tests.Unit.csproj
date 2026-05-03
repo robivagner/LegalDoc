@@ -26,6 +26,7 @@
     <ItemGroup>
       <ProjectReference Include="..\LegalDoc.Application\LegalDoc.Application.csproj" />
       <ProjectReference Include="..\LegalDoc.Domain\LegalDoc.Domain.csproj" />
+      <ProjectReference Include="..\LegalDoc.Infrastructure\LegalDoc.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

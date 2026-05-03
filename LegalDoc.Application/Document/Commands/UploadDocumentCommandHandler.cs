@@ -4,7 +4,11 @@ using MediatR;
 
 namespace LegalDoc.Application.Document.Commands;
 
-public sealed class UploadDocumentCommandHandler(IDocumentsRepository documentRepository, IRegistryRepository registryRepository)
+public sealed class UploadDocumentCommandHandler(
+    IDocumentsRepository documentRepository,
+    IRegistryRepository registryRepository,
+    IDocumentTextExtractor documentTextExtractor,
+    IFileStorageService fileStorageService)
     : IRequestHandler<UploadDocumentCommand, Guid>
 {
     public async Task<Guid> Handle(UploadDocumentCommand request, CancellationToken cancellationToken)
@@ -18,8 +22,12 @@ public sealed class UploadDocumentCommandHandler(IDocumentsRepository documentRe
         
         registry.DocumentAdded();
         
-        var document = LegalDocument.Create(request.Title, request.FileName, request.StoragePath, request.Content, request.RegistryId);
+        var storagePath = await fileStorageService.SaveFileAsync(request.FileContent, request.FileName, cancellationToken);
+        var content = documentTextExtractor.ExtractTextFromPdf(storagePath);
+        
+        var document = LegalDocument.Create(request.Title, request.FileName, storagePath, content, request.RegistryId);
         await documentRepository.AddAsync(document, cancellationToken);
+        
         return document.Id;
     }
 }

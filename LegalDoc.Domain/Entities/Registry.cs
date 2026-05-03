@@ -36,7 +36,7 @@ public class Registry
             Name = name,
             Location = location,
             Capacity = capacity,
-            Availability = capacity
+            Availability = capacity,
         };
     }
 
@@ -46,15 +46,5 @@ public class Registry
             throw new InvalidOperationException("Registry is full!");
         
         Availability--;
-    }
-    
-    public void DocumentRemoved()
-    {
-        if (Availability >= Capacity)
-        {
-            throw new InvalidOperationException("Disponibilitatea nu poate depasi capacitatea maxima.");
-        }
-
-        Availability++;
     }
 }

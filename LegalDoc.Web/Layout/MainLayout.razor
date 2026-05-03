@@ -1,16 +1,115 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
+@inject State.AppState AppState
+@inject Services.DocumentService DocService
+@inject Services.ReviewTaskService TaskService
+@implements IDisposable
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+<MudThemeProvider IsDarkMode="@_isDarkMode" Theme="_currentTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudPopoverProvider />
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+<MudLayout>
+    <MudAppBar Elevation="1" Color="Color.Primary">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        
+        <a href="/" class="d-flex align-center" style="text-decoration: none; color: inherit; cursor: pointer;">
+            <MudIcon Icon="@Icons.Material.Filled.AccountBalance" Class="mr-2 ml-4" />
+            <MudText Typo="Typo.h5" Style="font-weight: 800; letter-spacing: 1px;">LegalDoc</MudText>
+            <MudText Typo="Typo.h5" Color="Color.Secondary" Style="font-weight: 800; margin-left: 4px;">AI</MudText>
+        </a>
+        
+        <MudSpacer />
+        
+        @* Notificare pentru Analize AI *@
+        <MudTooltip Text="@($"Ai {AppState.PendingAiAnalysesCount} documente ce necesită analiză AI")">
+            <MudBadge Content="@AppState.PendingAiAnalysesCount" Color="Color.Secondary" Overlap="true" Visible="@(AppState.PendingAiAnalysesCount > 0)">
+                <MudIconButton Icon="@Icons.Material.Filled.AutoAwesome" Color="Color.Inherit" href="/documents" />
+            </MudBadge>
+        </MudTooltip>
+        
+        @* Afișăm Clopoțelul cu numărul de Task-uri în așteptare din STATE *@
+        <MudTooltip Text="@($"Ai {AppState.PendingTasksCount} sarcini de rezolvat")">
+            <MudBadge Content="@AppState.PendingTasksCount" Color="Color.Error" Overlap="true" Visible="@(AppState.PendingTasksCount > 0)">
+                <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" href="/tasks" />
+            </MudBadge>
+        </MudTooltip>
+
+        <MudTooltip Text="@(_isDarkMode ? "Treci la tema luminoasă" : "Treci la tema întunecată")">
+            <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" 
+                           Color="Color.Inherit" 
+                           OnClick="ToggleDarkMode" />
+        </MudTooltip>
+        
+        @* 3. Afișăm Numele Utilizatorului din STATE *@
+        <MudChip T="string" Color="Color.Secondary" Size="Size.Small" Icon="@Icons.Material.Filled.Person" Class="ml-4">
+            @AppState.CurrentUser
+        </MudChip>
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="2">
+        <NavMenu />
+    </MudDrawer>
+
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pb-8">
+            <CascadingValue Value="this">
+                @Body
+            </CascadingValue>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    bool _drawerOpen = true;
+    public bool _isDarkMode { get; set; } = false;
+    private MudTheme _currentTheme = new MudTheme();
+
+    // Folosim varianta Async pentru a putea chema serviciile
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.OnChange += StateHasChanged;
+        AppState.SetCurrentUser("Admin LegalDoc");
+
+        // Chemăm metoda care aduce numărătoarea la prima deschidere
+        await LoadInitialNotificationCounts();
+    }
+
+    private async Task LoadInitialNotificationCounts()
+    {
+        try
+        {
+            // Lansăm cererile în paralel pentru ambele statusuri
+            var uploadedDocsTask = DocService.GetDocumentsByStatusAsync("Uploaded");
+            var rejectedDocsTask = DocService.GetDocumentsByStatusAsync("Rejected");
+            
+            // Așteptăm ca ambele să se termine simultan
+            await Task.WhenAll(uploadedDocsTask, rejectedDocsTask);
+
+            // Adunăm rezultatele
+            var totalPendingAi = uploadedDocsTask.Result.Count + rejectedDocsTask.Result.Count;
+            AppState.UpdatePendingAiAnalyses(totalPendingAi);
+
+            // Aducem task-urile
+            var pendingTasks = await TaskService.GetTasksByStatusAsync("Created"); 
+            AppState.UpdatePendingTasks(pendingTasks.Count);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Nu am putut încărca notificările: {ex.Message}");
+        }
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+
+    void DrawerToggle() => _drawerOpen = !_drawerOpen;
+    
+    public void ToggleDarkMode()
+    {
+        _isDarkMode = !_isDarkMode;
+        StateHasChanged();
+    }
+}

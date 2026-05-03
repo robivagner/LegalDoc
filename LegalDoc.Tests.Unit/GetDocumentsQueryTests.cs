@@ -30,7 +30,7 @@ public class GetDocumentsQueryTests
         docRepoMock.Setup(x => x.Query()).Returns(data);
 
         var handler = new GetDocumentsQueryHandler(docRepoMock.Object);
-        var query = new GetDocumentsQuery(DocumentStatus.Completed);
+        var query = new GetDocumentsQuery(Status: DocumentStatus.Completed);
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);

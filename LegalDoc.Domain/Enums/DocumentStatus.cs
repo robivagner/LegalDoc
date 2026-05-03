@@ -6,5 +6,5 @@ public enum DocumentStatus
     AwaitingReview,
     InReview,
     Completed,
-    Rejected
+    Rejected,
 }

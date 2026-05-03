@@ -3,6 +3,7 @@ using LegalDoc.Application.Document.Commands;
 using LegalDoc.Domain.Entities;
 using Moq;
 using FluentAssertions;
+using LegalDoc.Infrastructure.Services;
 
 namespace LegalDoc.Tests.Unit;
 
@@ -10,6 +11,8 @@ public class UploadDocumentTests
 {
     private readonly Mock<IDocumentsRepository> _docRepoMock;
     private readonly Mock<IRegistryRepository> _registryRepoMock;
+    private readonly Mock<IDocumentTextExtractor> _extractorMock;
+    private readonly Mock<IFileStorageService> _storageServiceMock;
     private readonly UploadDocumentCommandHandler _handler;
 
     public UploadDocumentTests()
@@ -17,16 +20,18 @@ public class UploadDocumentTests
         // 1. Simulam interfețele de repository folosind Moq
         _docRepoMock = new Mock<IDocumentsRepository>();
         _registryRepoMock = new Mock<IRegistryRepository>();
+        _extractorMock = new Mock<IDocumentTextExtractor>();
+        _storageServiceMock = new Mock<IFileStorageService>();
 
         // 2. Initializam Handler-ul cu obiectele simulate (Mocks)
-        _handler = new UploadDocumentCommandHandler(_docRepoMock.Object, _registryRepoMock.Object);
+        _handler = new UploadDocumentCommandHandler(_docRepoMock.Object, _registryRepoMock.Object, _extractorMock.Object, _storageServiceMock.Object);
     }
 
     [Fact]
     public async Task Handle_Should_ThrowException_WhenRegistryDoesNotExist()
     {
         // Arrange - Pregatim datele de test
-        var command = new UploadDocumentCommand("Titlu", "file.pdf", "/path", "Content", Guid.NewGuid());
+        var command = new UploadDocumentCommand("Titlu", "file.pdf", new byte[] { 1 }, Guid.NewGuid());
         
         // Simulam faptul ca FindAsync returneaza null (registrul nu e gasit)
         _registryRepoMock
@@ -45,13 +50,17 @@ public class UploadDocumentTests
     {
         // Arrange - Cream un registru valid pentru test
         var registryId = Guid.NewGuid();
-        var command = new UploadDocumentCommand("Contract", "contract.pdf", "/storage", "Content", registryId);
+        var command = new UploadDocumentCommand("Contract", "document1.pdf", new byte[] {1}, registryId);
         
         var registry = Registry.Create("Arhiva Centrala", "Bucuresti", 100);
         
         _registryRepoMock
             .Setup(r => r.FindAsync(registryId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(registry);
+        
+        _storageServiceMock
+            .Setup(x => x.SaveFileAsync(It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync("/fake/path.pdf");
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -73,7 +82,7 @@ public class UploadDocumentTests
         _registryRepoMock.Setup(x => x.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Registry)null!);
 
-        var command = new UploadDocumentCommand("Titlu", "f.pdf", "/p", "Content", Guid.NewGuid());
+        var command = new UploadDocumentCommand("Titlu", "f.pdf", new byte[] {1}, Guid.NewGuid());
 
         // Act
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
