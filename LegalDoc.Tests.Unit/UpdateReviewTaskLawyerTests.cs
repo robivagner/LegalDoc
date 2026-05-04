@@ -30,7 +30,7 @@ public class UpdateReviewTaskLawyerTests
         // Acest test il aveai deja, dar acum va folosi campurile de mai sus
         var oldLawyerId = Guid.NewGuid();
         var taskId = Guid.NewGuid();
-        var oldLawyer = Lawyer.Create("Vechiul Avocat", "123", "v@mail.com");
+        var oldLawyer = Lawyer.Create(Guid.NewGuid(), "Vechiul Avocat", "123", "v@mail.com");
         var reviewTask = ReviewTask.Create(Guid.NewGuid(), oldLawyerId, "Review");
 
         _taskRepoMock.Setup(x => x.FindAsync(taskId, It.IsAny<CancellationToken>())).ReturnsAsync(reviewTask);
@@ -51,10 +51,10 @@ public class UpdateReviewTaskLawyerTests
         var oldLawyerId = Guid.NewGuid();
         var newLawyerId = Guid.NewGuid();
         
-        var oldLawyer = Lawyer.Create("Vechi", "1", "v@t.com");
+        var oldLawyer = Lawyer.Create(Guid.NewGuid(), "Vechi", "1", "v@t.com");
         oldLawyer.UpdateLawyerActivity(false); // Trebuie sa fie inactiv ca sa trecem de prima verificare
         
-        var newLawyer = Lawyer.Create("Nou", "2", "n@t.com");
+        var newLawyer = Lawyer.Create(Guid.NewGuid(), "Nou", "2", "n@t.com");
         newLawyer.UpdateLawyerActivity(false); // Noul e inactiv -> eroare asteptata
 
         var task = ReviewTask.Create(Guid.NewGuid(), oldLawyerId, "Desc");

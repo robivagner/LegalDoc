@@ -20,4 +20,14 @@ public class FileStorageService : IFileStorageService
 
         return fullPath;
     }
+    
+    public async Task<byte[]> ReadFileAsync(string storagePath, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrEmpty(storagePath) || !File.Exists(storagePath))
+        {
+            throw new FileNotFoundException("Fișierul fizic lipsește de pe server.");
+        }
+    
+        return await File.ReadAllBytesAsync(storagePath, cancellationToken);
+    }
 }

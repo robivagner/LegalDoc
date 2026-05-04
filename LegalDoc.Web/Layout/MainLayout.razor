@@ -1,7 +1,13 @@
 ﻿@inherits LayoutComponentBase
+@using LegalDoc.Web.Auth
 @inject State.AppState AppState
 @inject Services.DocumentService DocService
 @inject Services.ReviewTaskService TaskService
+@inject Services.LawyerService LawyerService
+@inject Services.AuthService AuthService
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager NavManager
+@inject IJSRuntime JSRuntime
 @implements IDisposable
 
 <MudThemeProvider IsDarkMode="@_isDarkMode" Theme="_currentTheme" />
@@ -21,19 +27,28 @@
         
         <MudSpacer />
         
-        @* Notificare pentru Analize AI *@
-        <MudTooltip Text="@($"Ai {AppState.PendingAiAnalysesCount} documente ce necesită analiză AI")">
-            <MudBadge Content="@AppState.PendingAiAnalysesCount" Color="Color.Secondary" Overlap="true" Visible="@(AppState.PendingAiAnalysesCount > 0)">
-                <MudIconButton Icon="@Icons.Material.Filled.AutoAwesome" Color="Color.Inherit" href="/documents" />
-            </MudBadge>
-        </MudTooltip>
-        
-        @* Afișăm Clopoțelul cu numărul de Task-uri în așteptare din STATE *@
-        <MudTooltip Text="@($"Ai {AppState.PendingTasksCount} sarcini de rezolvat")">
-            <MudBadge Content="@AppState.PendingTasksCount" Color="Color.Error" Overlap="true" Visible="@(AppState.PendingTasksCount > 0)">
-                <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" href="/tasks" />
-            </MudBadge>
-        </MudTooltip>
+        @* Notificări protejate de statusul de login *@
+        <AuthorizeView>
+            <Authorized>
+                <MudTooltip Text="@(AppState.NeedsProfileCompletion ? "Finalizează profilul" : "Analize AI")">
+                    <MudBadge Content="@AppState.PendingAiAnalysesCount" Color="Color.Secondary" Overlap="true" Visible="@(AppState.PendingAiAnalysesCount > 0)">
+                        <MudIconButton Icon="@Icons.Material.Filled.AutoAwesome" 
+                                       Color="Color.Inherit" 
+                                       href="/documents" 
+                                       Disabled="@AppState.NeedsProfileCompletion" />
+                    </MudBadge>
+                </MudTooltip>
+                
+                <MudTooltip Text="@(AppState.NeedsProfileCompletion ? "Finalizează profilul" : "Sarcinile mele")">
+                    <MudBadge Content="@AppState.PendingTasksCount" Color="Color.Error" Overlap="true" Visible="@(AppState.PendingTasksCount > 0)">
+                        <MudIconButton Icon="@Icons.Material.Filled.Notifications" 
+                                       Color="Color.Inherit" 
+                                       href="/tasks" 
+                                       Disabled="@AppState.NeedsProfileCompletion" />
+                    </MudBadge>
+                </MudTooltip>
+            </Authorized>
+        </AuthorizeView>
 
         <MudTooltip Text="@(_isDarkMode ? "Treci la tema luminoasă" : "Treci la tema întunecată")">
             <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" 
@@ -41,10 +56,29 @@
                            OnClick="ToggleDarkMode" />
         </MudTooltip>
         
-        @* 3. Afișăm Numele Utilizatorului din STATE *@
-        <MudChip T="string" Color="Color.Secondary" Size="Size.Small" Icon="@Icons.Material.Filled.Person" Class="ml-4">
-            @AppState.CurrentUser
-        </MudChip>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                <MudButton StartIcon="@Icons.Material.Filled.PersonAdd" Color="Color.Warning" Variant="Variant.Text" Href="/admin/register" Class="ml-4">
+                    Creare Cont
+                </MudButton>
+            </Authorized>
+        </AuthorizeView>
+
+        <AuthorizeView>
+            <Authorized>
+                @{
+                    var userName = context.User.Identity?.Name;
+                    var userRole = context.User.FindFirst("role")?.Value ?? "Viewer";
+                    var roleColor = userRole == "Admin" ? Color.Warning : userRole == "Lawyer" ? Color.Info : Color.Tertiary;
+                }
+                <MudChip T="string" Color="Color.Secondary" Size="Size.Small" Icon="@Icons.Material.Filled.Person" Class="ml-2">@userName</MudChip>
+                <MudChip T="string" Color="@roleColor" Size="Size.Small" Variant="Variant.Filled" Class="ml-1 mr-2">@userRole</MudChip>
+                <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" OnClick="Logout" />
+            </Authorized>
+            <NotAuthorized>
+                <MudButton StartIcon="@Icons.Material.Filled.Login" Color="Color.Secondary" Variant="Variant.Filled" Href="/login" Class="ml-4">Login</MudButton>
+            </NotAuthorized>
+        </AuthorizeView>
     </MudAppBar>
 
     <MudDrawer @bind-Open="_drawerOpen" Elevation="2">
@@ -53,9 +87,29 @@
 
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pb-8">
-            <CascadingValue Value="this">
-                @Body
-            </CascadingValue>
+            <AuthorizeView>
+                <Authorized>
+                    @* Doar utilizatorii logați văd conținutul paginilor *@
+                    <CascadingValue Value="this">
+                        @Body
+                    </CascadingValue>
+                </Authorized>
+                <NotAuthorized>
+                    @* Utilizatorii nelogați văd doar paginile de login sau un mesaj de eroare *@
+                    @if (NavManager.Uri.Contains("/login"))
+                    {
+                        @Body
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-column align-center justify-center mt-16">
+                            <MudIcon Icon="@Icons.Material.Filled.Lock" Size="Size.Large" Color="Color.Error" />
+                            <MudText Typo="Typo.h5" Class="mt-4">Acces restricționat. Te rugăm să te autentifici.</MudText>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" href="/login" Class="mt-4">Spre Login</MudButton>
+                        </div>
+                    }
+                </NotAuthorized>
+            </AuthorizeView>
         </MudContainer>
     </MudMainContent>
 </MudLayout>
@@ -65,51 +119,103 @@
     public bool _isDarkMode { get; set; } = false;
     private MudTheme _currentTheme = new MudTheme();
 
-    // Folosim varianta Async pentru a putea chema serviciile
     protected override async Task OnInitializedAsync()
     {
         AppState.OnChange += StateHasChanged;
-        AppState.SetCurrentUser("Admin LegalDoc");
-
-        // Chemăm metoda care aduce numărătoarea la prima deschidere
-        await LoadInitialNotificationCounts();
+        AuthProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        await CheckAndLoadData();
     }
 
-    private async Task LoadInitialNotificationCounts()
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        await InvokeAsync(async () => {
+            await CheckAndLoadData();
+            StateHasChanged();
+        });
+    }
+
+    private async Task CheckAndLoadData()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            Guid? currentLawyerId = null;
+            if (user.IsInRole("Lawyer"))
+            {
+                var profile = await LawyerService.GetMyProfileAsync();
+                AppState.UpdateProfileStatus(profile == null);
+                currentLawyerId = profile?.Id;
+            }
+            else
+            {
+                AppState.UpdateProfileStatus(false);
+            }
+            await LoadInitialNotificationCounts(currentLawyerId);
+        }
+        else
+        {
+            ResetGlobalState();
+        }
+    }
+
+    private void ResetGlobalState()
+    {
+        AppState.UpdateProfileStatus(false);
+        AppState.UpdatePendingAiAnalyses(0);
+        AppState.UpdatePendingTasks(0);
+    }
+
+    private async Task LoadInitialNotificationCounts(Guid? lawyerId)
     {
         try
         {
-            // Lansăm cererile în paralel pentru ambele statusuri
             var uploadedDocsTask = DocService.GetDocumentsByStatusAsync("Uploaded");
             var rejectedDocsTask = DocService.GetDocumentsByStatusAsync("Rejected");
+            var pendingTasksTask = TaskService.GetTasksFilteredAsync(lawyerId, "Created");
             
-            // Așteptăm ca ambele să se termine simultan
-            await Task.WhenAll(uploadedDocsTask, rejectedDocsTask);
-
-            // Adunăm rezultatele
-            var totalPendingAi = uploadedDocsTask.Result.Count + rejectedDocsTask.Result.Count;
-            AppState.UpdatePendingAiAnalyses(totalPendingAi);
-
-            // Aducem task-urile
-            var pendingTasks = await TaskService.GetTasksByStatusAsync("Created"); 
-            AppState.UpdatePendingTasks(pendingTasks.Count);
+            await Task.WhenAll(uploadedDocsTask, rejectedDocsTask, pendingTasksTask);
+            
+            AppState.UpdatePendingAiAnalyses(uploadedDocsTask.Result.Count + rejectedDocsTask.Result.Count);
+            AppState.UpdatePendingTasks(pendingTasksTask.Result.Count);
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Nu am putut încărca notificările: {ex.Message}");
-        }
+        catch { }
     }
 
     public void Dispose()
     {
         AppState.OnChange -= StateHasChanged;
+        AuthProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
     }
 
     void DrawerToggle() => _drawerOpen = !_drawerOpen;
     
-    public void ToggleDarkMode()
+    public async Task ToggleDarkMode()
     {
         _isDarkMode = !_isDarkMode;
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "darkMode", _isDarkMode.ToString().ToLower());
         StateHasChanged();
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var darkModeStored = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "darkMode");
+            if (bool.TryParse(darkModeStored, out bool isDark))
+            {
+                _isDarkMode = isDark;
+                StateHasChanged();
+            }
+        }
+    }
+    
+    private async Task Logout()
+    {
+        await AuthService.LogoutAsync();
+        ((CustomAuthStateProvider)AuthProvider).NotifyUserLogout();
+        ResetGlobalState();
+        NavManager.NavigateTo("/login");
     }
 }

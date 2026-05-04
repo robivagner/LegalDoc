@@ -17,7 +17,7 @@ public class ReviewTaskIntegrationTests
         using var context = _fixture.CreateContext();
         
         // 1. Cream datele necesare (Lawyer si Document)
-        var lawyer = Lawyer.Create("Avocat Test", "BAR123", "avocat@test.ro");
+        var lawyer = Lawyer.Create(Guid.NewGuid(),"Avocat Test", "BAR123", "avocat@test.ro");
         var document = LegalDocument.Create("Contract Test", "test.pdf", "/path", "Content", Guid.NewGuid());
         
         // Setam statusul documentului sa fie gata de review (folosind Reflection daca e nevoie)

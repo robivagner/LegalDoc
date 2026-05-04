@@ -4,6 +4,8 @@
 @inject LawyerService LawyerSvc
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject State.AppState AppState
+@inject NavigationManager NavManager
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-16 mt-6">
     @* --- HEADER ȘI BUTOANE --- *@
@@ -11,21 +13,25 @@
         <MudText Typo="Typo.h4" Color="Color.Primary" Style="font-weight: 700">Echipă Avocați</MudText>
         <MudSpacer />
         
+        @if (AppState.NeedsProfileCompletion)
+        {
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Warning" 
+                       StartIcon="@Icons.Material.Filled.AssignmentInd" 
+                       OnClick="@(() => NavManager.NavigateTo("/complete-profile"))"
+                       Class="mr-4">
+                Completează-ți Profilul
+            </MudButton>
+        }
+        
         @* Buton Toggle pentru Filtre *@
         <MudToggleIconButton @bind-Toggled="@_filtersVisible"
                              Icon="@Icons.Material.Filled.FilterList"
                              Color="Color.Default"
                              ToggledIcon="@Icons.Material.Filled.FilterListOff"
                              ToggledColor="Color.Secondary"
-                             Title="Filtrează avocați"
+                             AriaLabel="Filtrează avocați"
                              Class="mr-2" />
-
-        <MudButton Variant="Variant.Filled" 
-                   Color="Color.Secondary" 
-                   OnClick="OpenCreateDialog"
-                   StartIcon="@Icons.Material.Filled.PersonAdd">
-            Adaugă Avocat
-        </MudButton>
     </div>
 
     @* --- PANEL FILTRE --- *@
@@ -68,7 +74,7 @@
               Hover="true" 
               Elevation="4" 
               Loading="@_loading" 
-              Striped="true"
+              Striped="false"
               SortLabel="Sortează după">
         <HeaderContent>
             <MudTh>
@@ -82,7 +88,6 @@
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                @* Folosim fallback la string gol pentru a evita crăparea sortării dacă un email este NULL *@
                 <MudTableSortLabel SortBy="new Func<LawyerDto, object>(x => x.Email ?? string.Empty)">
                     Email
                 </MudTableSortLabel>
@@ -186,6 +191,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // Am curățat logica de verificare a profilului de aici.
         await LoadLawyers();
     }
 
@@ -203,19 +209,6 @@
         finally 
         {
             _loading = false;
-        }
-    }
-
-    private async Task OpenCreateDialog()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, MaxWidth = MaxWidth.Small };
-        
-        var dialog = await DialogService.ShowAsync<CreateLawyerDialog>("Adaugă Avocat", options);
-        var result = await dialog.Result;
-        
-        if (result is not null && !result.Canceled)
-        {
-            await LoadLawyers();
         }
     }
     

@@ -36,7 +36,7 @@ public class UpdateReviewTaskStatusTests
 
         // Cream obiectele de Domain
         var document = LegalDocument.Create("Titlu", "file.pdf", "/path", "Content", Guid.NewGuid());
-        var lawyer = Lawyer.Create("Avocat", "123", "a@a.com");
+        var lawyer = Lawyer.Create(Guid.NewGuid(), "Avocat", "123", "a@a.com");
         var reviewTask = ReviewTask.Create(docId, lawyerId, "Review initial");
 
         // Simulam repository-urile sa returneze obiectele noastre
@@ -68,7 +68,7 @@ public class UpdateReviewTaskStatusTests
         var taskId = Guid.NewGuid();
         var lawyerId = Guid.NewGuid();
         
-        var lawyer = Lawyer.Create("Avocat", "123", "a@a.com");
+        var lawyer = Lawyer.Create(Guid.NewGuid(), "Avocat", "123", "a@a.com");
         lawyer.UpdateLawyerActivity(false); // Avocatul devine inactiv intre timp
         
         var reviewTask = ReviewTask.Create(Guid.NewGuid(), lawyerId, "Review");

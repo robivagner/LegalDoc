@@ -5,6 +5,19 @@ namespace LegalDoc.Web.Services;
 
 public class LawyerService(HttpClient http)
 {
+    public async Task<LawyerDto?> GetMyProfileAsync()
+    {
+        var response = await http.GetAsync("api/v1/lawyers/me");
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound) return null;
+        
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<LawyerDto>();
+        }
+
+        return null;
+    }
+    
     public async Task<List<LawyerDto>> GetLawyersAsync()
     {
         var response = await http.GetFromJsonAsync<List<LawyerDto>>("api/v1/lawyers");
@@ -17,7 +30,7 @@ public class LawyerService(HttpClient http)
         response.EnsureSuccessStatusCode();
     }
     
-    public async Task CreateLawyerAsync(string name, string barNumber, string? email)
+    public async Task CreateLawyerAsync(string name, string barNumber, string email)
     {
         var payload = new { Name = name, BarNumber = barNumber, Email = email };
         

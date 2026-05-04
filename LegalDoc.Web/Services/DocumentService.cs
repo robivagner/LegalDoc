@@ -2,10 +2,11 @@
 using LegalDoc.Web.Models;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace LegalDoc.Web.Services;
 
-public class DocumentService(HttpClient http, NavigationManager nav)
+public class DocumentService(HttpClient http, IJSRuntime js)
 {
     public async Task<List<DocumentDto>> GetDocumentsAsync() =>
         await http.GetFromJsonAsync<List<DocumentDto>>("api/v1/documents") ?? new();
@@ -25,11 +26,20 @@ public class DocumentService(HttpClient http, NavigationManager nav)
         response.EnsureSuccessStatusCode();
     }
     
-    public void DownloadDocument(Guid documentId)
+    public async Task DownloadDocumentAsync(Guid documentId, string fileName)
     {
-        var baseUrl = http.BaseAddress?.ToString().TrimEnd('/');
-        var downloadUrl = $"{baseUrl}/api/v1/documents/{documentId}/file";
-        
-        nav.NavigateTo(downloadUrl, forceLoad: true);
+        var response = await http.GetAsync($"api/v1/documents/{documentId}/file");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var fileStream = await response.Content.ReadAsStreamAsync();
+            using var streamRef = new DotNetStreamReference(stream: fileStream);
+            
+            await js.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+        }
+        else
+        {
+            throw new Exception("Nu s-a putut descărca fișierul. Serverul a răspuns cu eroare.");
+        }
     }
 }

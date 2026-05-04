@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using FluentValidation;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,11 +17,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
-// --- 2. IDENTITY (Repară eroarea UserManager) ---
+// --- 2. IDENTITY ---
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
-    options.Password.RequiredLength = 6;
+    options.Password.RequiredLength = 4;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
 })
@@ -31,9 +31,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 // --- 3. AUTENTIFICARE JWT ---
 var jwtSecret = builder.Configuration["JwtSettings:Secret"];
 if (string.IsNullOrEmpty(jwtSecret))
-{
     throw new Exception("CRITICAL ERROR: JWT Secret is missing from configuration!");
-}
+
 var key = Encoding.ASCII.GetBytes(jwtSecret);
 
 builder.Services.AddAuthentication(options =>
@@ -71,11 +70,10 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddValidatorsFromAssembly(typeof(IDocumentsRepository).Assembly);
 builder.Services.AddFluentValidationAutoValidation();
 
-builder.Services.AddMediatR(cfg => 
+builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(IDocumentsRepository).Assembly));
 
-// Am păstrat configurația ta originală de Swagger/OpenApi aici
-builder.Services.AddOpenApi();
+// --- 5. SWAGGER ---
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -83,10 +81,36 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Legal Document Summarizer API",
         Version = "v1",
-        Description = "API for legal document summarizer",
+        Description = "API for legal document summarizer"
+    });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Introdu token-ul JWT aici."
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
     });
 });
 
+// --- 6. SERVICII APLICATIE ---
 builder.Services.AddScoped<IDocumentsRepository, DocumentsRepository>();
 builder.Services.AddScoped<IRegistryRepository, RegistryRepository>();
 builder.Services.AddScoped<ILawyerRepository, LawyerRepository>();
@@ -98,44 +122,25 @@ builder.Services.AddHttpClient<IAiService, AiService>();
 
 var app = builder.Build();
 
-// --- 5. MIDDLEWARE ---
+// --- 7. MIDDLEWARE ---
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Legal Document API V1");
-        c.RoutePrefix = string.Empty; 
+        c.RoutePrefix = string.Empty;
     });
-    app.MapOpenApi();
 }
 
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-
-    string[] roles = { "Admin", "Lawyer", "Viewer" };
-
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-            await roleManager.CreateAsync(new IdentityRole(role));
-    }
-    
-    if (await userManager.FindByEmailAsync("admin@legaldoc.com") == null)
-    {
-        var admin = new IdentityUser { UserName = "admin", Email = "admin@legaldoc.com" };
-        await userManager.CreateAsync(admin, "Admin123!");
-        await userManager.AddToRoleAsync(admin, "Admin");
-    }
+    await DbInitializer.SeedAsync(scope.ServiceProvider);
 }
 
 app.UseHttpsRedirection();
 app.UseCors("BlazorPolicy");
-
-// Ordinea contează aici:
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

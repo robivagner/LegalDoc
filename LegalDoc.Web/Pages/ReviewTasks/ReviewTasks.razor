@@ -7,6 +7,7 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject State.AppState AppState
+@inject AuthenticationStateProvider AuthStateProvider
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-16 mt-6">
     @* --- HEADER ȘI BUTOANE --- *@
@@ -71,7 +72,7 @@
               Hover="true" 
               Elevation="4" 
               Loading="@_loading" 
-              Striped="true"
+              Striped="false"
               SortLabel="Sortează după">
         <HeaderContent>
             <MudTh><MudTableSortLabel SortBy="new Func<ReviewTaskDto, object>(x => x.Description ?? string.Empty)">Descriere</MudTableSortLabel></MudTh>
@@ -188,22 +189,29 @@
 
     private async Task LoadData()
     {
+        _loading = true;
         try 
         {
-            _loading = true;
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
             
-            var tasksTask = TaskService.GetTasksAsync();
-            var lawyersTask = LawyerService.GetLawyersAsync();
-            var docsTask = DocService.GetDocumentsAsync();
+            _lawyers = await LawyerService.GetLawyersAsync();
+            _documents = await DocService.GetDocumentsAsync();
             
-            await Task.WhenAll(tasksTask, lawyersTask, docsTask);
-
-            _tasks = tasksTask.Result;
-            _lawyers = lawyersTask.Result;
-            _documents = docsTask.Result;
+            if (user.IsInRole("Admin"))
+            {
+                _tasks = await TaskService.GetTasksAsync();
+            }
+            else
+            {
+                var profile = await LawyerService.GetMyProfileAsync();
+                if (profile != null)
+                {
+                    _tasks = await TaskService.GetTasksFilteredAsync(lawyerId: profile.Id);
+                }
+            }
             
-            var pendingCount = _tasks.Count(t => t.Status == "Created");
-            AppState.UpdatePendingTasks(pendingCount);
+            AppState.UpdatePendingTasks(_tasks.Count(t => t.Status == "Created"));
         }
         catch (Exception ex) 
         {
@@ -277,8 +285,16 @@
 
     private async Task OpenCreateDialog()
     {
+        var filteredDocs = _documents.Where(d => d.Status == "AwaitingReview").ToList();
+
+        var parameters = new DialogParameters
+        {
+            { "AvailableDocuments", filteredDocs }
+        };
+
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, MaxWidth = MaxWidth.Small };
-        var dialog = await DialogService.ShowAsync<AssignTaskDialog>("Creare Task Nou", options);
+        
+        var dialog = await DialogService.ShowAsync<AssignTaskDialog>("Asignează Task Nou", parameters, options);
         var result = await dialog.Result;
 
         if (result is not null && !result.Canceled)

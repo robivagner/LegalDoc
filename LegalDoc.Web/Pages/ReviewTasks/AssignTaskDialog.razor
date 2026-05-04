@@ -1,98 +1,61 @@
 ﻿@using LegalDoc.Web.Models
 @using LegalDoc.Web.Services
-@inject ReviewTaskService TaskSvc
-@inject LawyerService LawyerSvc
-@inject DocumentService DocSvc
+@inject ReviewTaskService TaskService
+@inject LawyerService LawyerService
 @inject ISnackbar Snackbar
 
 <MudDialog>
     <DialogContent>
-        <MudForm @ref="_form" @bind-IsValid="@_isValid">
-            
-            <MudSelect T="Guid" 
-                       Label="Selectează Documentul" 
-                       @bind-Value="_selectedDocumentId" 
-                       Required="true" 
-                       RequiredError="Trebuie să selectezi un document!">
-                @foreach (var doc in _documents.Where(d => d.Status == "AwaitingReview"))
-                {
-                    <MudSelectItem Value="@doc.Id">@doc.Title</MudSelectItem>
-                }
-            </MudSelect>
+        <MudText Class="mb-4">Selectează un document din cele trimise spre analiză pentru a-l prelua.</MudText>
+        
+        <MudSelect T="Guid" Label="Documente în așteptare" @bind-Value="_selectedDocId" AnchorOrigin="Origin.BottomCenter" Required="true">
+            @foreach (var doc in AvailableDocuments)
+            {
+                <MudSelectItem Value="@doc.Id">@doc.Title</MudSelectItem>
+            }
+        </MudSelect>
 
-            <MudSelect T="Guid" 
-                       Label="Selectează Avocatul" 
-                       @bind-Value="_selectedLawyerId" 
-                       Required="true" 
-                       RequiredError="Trebuie să selectezi un avocat!" 
-                       Class="mt-4">
-                @* Afișăm în listă doar avocații activi *@
-                @foreach (var lawyer in _lawyers.Where(l => l.IsActive))
-                {
-                    <MudSelectItem Value="@lawyer.Id">@lawyer.Name</MudSelectItem>
-                }
-            </MudSelect>
-
-            <MudTextField T="string" 
-                          Label="Descriere / Notițe (Opțional)" 
-                          @bind-Value="_description" 
-                          Lines="3" 
-                          Class="mt-4" />
-                          
-        </MudForm>
+        <MudTextField T="string" Label="Note suplimentare (opțional)" @bind-Value="_description" Lines="3" Class="mt-4" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Anulează</MudButton>
-        <MudButton Color="Color.Primary" 
-                   Variant="Variant.Filled" 
-                   OnClick="Submit" 
-                   Disabled="@(!_isValid)">
-            Asignează
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit" Disabled="@(_selectedDocId == Guid.Empty || _processing)">
+            @if (_processing) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/> }
+            Preia Task-ul
         </MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
-
-    private MudForm _form = null!;
-    private bool _isValid;
     
-    private Guid _selectedDocumentId;
-    private Guid _selectedLawyerId;
-    private string? _description;
+    [Parameter] public List<DocumentDto> AvailableDocuments { get; set; } = new();
     
-    private List<LawyerDto> _lawyers = new();
-    private List<DocumentDto> _documents = new();
+    private Guid _selectedDocId;
+    private string _description = "";
+    private bool _processing;
 
-    protected override async Task OnInitializedAsync()
-    {
-        var lawyersTask = LawyerSvc.GetLawyersAsync();
-        var docsTask = DocSvc.GetDocumentsAsync();
-        
-        await Task.WhenAll(lawyersTask, docsTask);
-        
-        _lawyers = lawyersTask.Result;
-        _documents = docsTask.Result;
-    }
-
-    private async Task Submit()
-    {
-        await _form.ValidateAsync();
-        
-        if (_form.IsValid)
+    private async Task Submit() {
+        _processing = true;
+        try 
         {
-            try
+            var profile = await LawyerService.GetMyProfileAsync();
+            if (profile != null)
             {
-                await TaskSvc.AssignTaskAsync(_selectedDocumentId, _selectedLawyerId, _description);
-                Snackbar.Add("Task-ul a fost asignat cu succes!", Severity.Success);
+                await TaskService.AssignTaskAsync(_selectedDocId, profile.Id, _description);
+                Snackbar.Add("Task-ul ți-a fost asignat cu succes!", Severity.Success);
                 MudDialog.Close(DialogResult.Ok(true));
             }
-            catch (Exception ex)
+            else
             {
-                Snackbar.Add("Eroare la asignare: " + ex.Message, Severity.Error);
+                Snackbar.Add("Eroare: Nu s-a putut identifica profilul de avocat.", Severity.Error);
             }
         }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Eroare la asignare: " + ex.Message, Severity.Error);
+        }
+        finally { _processing = false; }
     }
 
     private void Cancel() => MudDialog.Cancel();

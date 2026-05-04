@@ -24,7 +24,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Python", "Python", "{474041
 		Python\requirements.txt = Python\requirements.txt
 		Python\.env = Python\.env
 		Python\.env.example = Python\.env.example
-		Python\test_ai.py = Python\test_ai.py
 		Python\commands.txt = Python\commands.txt
 	EndProjectSection
 EndProject

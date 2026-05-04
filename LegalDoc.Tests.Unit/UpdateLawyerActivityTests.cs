@@ -22,7 +22,7 @@ public class UpdateLawyerActivityTests
     {
         // Arrange
         var lawyerId = Guid.NewGuid();
-        var lawyer = Lawyer.Create("Avocat", "123", "a@test.com");
+        var lawyer = Lawyer.Create(Guid.NewGuid(), "Avocat", "123", "a@test.com");
         _repoMock.Setup(x => x.FindAsync(lawyerId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(lawyer);
 

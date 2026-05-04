@@ -15,7 +15,7 @@ public class GetLawyersTests
         var repoMock = new Mock<ILawyerRepository>();
         var data = new List<Lawyer> 
         { 
-            Lawyer.Create("Andrei Ionescu", "BAR777", "andrei@law.ro") 
+            Lawyer.Create(Guid.NewGuid(), "Andrei Ionescu", "BAR777", "andrei@law.ro") 
         }.AsQueryable();
 
         repoMock.Setup(x => x.Query()).Returns(data);

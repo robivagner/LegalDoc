@@ -34,6 +34,7 @@ namespace LegalDoc.Infrastructure.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 

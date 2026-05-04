@@ -9,6 +9,7 @@ namespace LegalDoc.API.Controllers;
 
 [ApiController]
 [Route("api/v1/review-tasks")]
+[Authorize]
 public class ReviewTasksController(IMediator mediator) : ControllerBase
 {
     [Authorize(Roles = "Lawyer")]
@@ -19,6 +20,7 @@ public class ReviewTasksController(IMediator mediator) : ControllerBase
         return Created($"/api/v1/review-tasks/{id}", new { id });
     }
     
+    [Authorize(Roles = "Admin,Lawyer,Viewer")]
     [HttpGet]
     public async Task<IActionResult> GetTasks([FromQuery] Guid? lawyerId, [FromQuery] ReviewTaskStatus? status)
     {

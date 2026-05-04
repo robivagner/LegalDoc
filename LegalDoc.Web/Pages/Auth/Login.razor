@@ -3,9 +3,11 @@
 @using LegalDoc.Web.Services
 @using LegalDoc.Web.Auth
 @inject AuthService AuthService
-@inject NavigationManager Nav
+@inject LawyerService LawyerService
+@inject NavigationManager NavManager
 @inject ISnackbar Snackbar
 @inject AuthenticationStateProvider AuthProvider
+@inject State.AppState AppState
 
 <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center justify-center" Style="height: 80vh;">
     <MudPaper Elevation="4" Class="pa-8" Style="width: 100%; max-width: 400px; border-radius: 16px;">
@@ -15,8 +17,8 @@
             <MudText Typo="Typo.body2" Color="Color.Secondary">LegalDoc AI Management</MudText>
         </div>
 
-        <MudTextField @bind-Value="_model.Email" Label="Email" Variant="Variant.Outlined" 
-                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" Class="mb-4" />
+        <MudTextField @bind-Value="_model.UserName" Label="Nume utilizator" Variant="Variant.Outlined" 
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" Class="mb-4" />
         
         <MudTextField @bind-Value="_model.Password" Label="Parolă" Variant="Variant.Outlined" 
                       InputType="InputType.Password" Adornment="Adornment.Start" 
@@ -43,7 +45,7 @@
 
     private async Task HandleLogin()
     {
-        if (string.IsNullOrWhiteSpace(_model.Email) || string.IsNullOrWhiteSpace(_model.Password))
+        if (string.IsNullOrWhiteSpace(_model.UserName) || string.IsNullOrWhiteSpace(_model.Password))
         {
             Snackbar.Add("Te rugăm să completezi toate câmpurile.", Severity.Warning);
             return;
@@ -54,15 +56,33 @@
         
         if (success)
         {
-            // Anunțăm sistemul că avem un user nou
-            ((CustomAuthStateProvider)AuthProvider).NotifyUserLogin(_model.Email);
+            ((CustomAuthStateProvider)AuthProvider).NotifyUserLogin(_model.UserName);
+            
+            var authState = await AuthProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            
+            if (user.IsInRole("Lawyer"))
+            {
+                var profile = await LawyerService.GetMyProfileAsync();
+
+                if (profile == null)
+                {
+                    AppState.UpdateProfileStatus(true);
+                    Snackbar.Add("Trebuie să-ți completezi profilul înainte de a continua.", Severity.Warning);
+                    NavManager.NavigateTo("/complete-profile");
+                    _loading = false;
+                    return;
+                }
+
+                AppState.UpdateProfileStatus(false);
+            }
             
             Snackbar.Add("Autentificare reușită!", Severity.Success);
-            Nav.NavigateTo("/");
+            NavManager.NavigateTo("/");
         }
         else
         {
-            Snackbar.Add("Email sau parolă incorectă.", Severity.Error);
+            Snackbar.Add("Invalid credentials.", Severity.Error);
         }
         _loading = false;
     }

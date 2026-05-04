@@ -8,10 +8,10 @@ public class AssignRoleCommandHandler(UserManager<IdentityUser> userManager, Rol
 {
     public async Task<Unit> Handle(AssignRoleCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByNameAsync(request.UserName);
+        var user = await userManager.FindByIdAsync(request.UserId);
         if (user == null) throw new KeyNotFoundException("Utilizatorul nu a fost găsit.");
         
-        var validRoles = new[] { "Admin", "Lawyer", "Viewer" };
+        var validRoles = new[] { "Lawyer", "Viewer" };
         if (!validRoles.Contains(request.RoleName))
             throw new Exception("Rolul specificat nu este valid.");
         

@@ -3,15 +3,14 @@
 public class AppState
 {
     public event Action? OnChange;
-
-    public string CurrentUser { get; private set; } = "Vizitator";
-    public int PendingTasksCount { get; private set; } = 0;
     
+    public int PendingTasksCount { get; private set; } = 0;
     public int PendingAiAnalysesCount { get; private set; } = 0;
-
-    public void SetCurrentUser(string userName)
+    public bool NeedsProfileCompletion { get; private set; }
+    
+    public void UpdateProfileStatus(bool needsCompletion)
     {
-        CurrentUser = userName;
+        NeedsProfileCompletion = needsCompletion;
         NotifyStateChanged();
     }
 

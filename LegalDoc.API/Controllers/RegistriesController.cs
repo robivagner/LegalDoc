@@ -8,6 +8,7 @@ namespace LegalDoc.API.Controllers;
 
 [ApiController]
 [Route("api/v1/registries")]
+[Authorize]
 public class RegistriesController(IMediator mediator) : ControllerBase
 {
     [Authorize(Roles = "Lawyer")]
@@ -18,6 +19,7 @@ public class RegistriesController(IMediator mediator) : ControllerBase
         return Created($"/api/v1/registries/{id}", new { id });
     }
     
+    [Authorize(Roles = "Admin,Lawyer,Viewer")]
     [HttpGet]
     public async Task<IActionResult> GetRegistries()
     {

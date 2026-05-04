@@ -16,7 +16,7 @@ public class LawyerRepositoryTests
         // Aici pui clasa ta reala de Repository din Infrastructure
         var repository = new LawyerRepository(context); 
         
-        var lawyer = Lawyer.Create("Avocat Integrare", "BAR-999", "integrare@test.com");
+        var lawyer = Lawyer.Create(Guid.NewGuid(),"Avocat Integrare", "BAR-999", "integrare@test.com");
 
         // Act
         await repository.AddAsync(lawyer);

@@ -13,10 +13,14 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Configurare HttpClient pentru API-ul principal
-builder.Services.AddScoped(sp => new HttpClient { 
-    BaseAddress = new Uri("http://localhost:5000")
-});
+builder.Services.AddScoped<JwtAuthorizationHandler>();
+
+builder.Services.AddHttpClient("LegalDoc.API", client => 
+    {
+        client.BaseAddress = new Uri("http://localhost:5000");
+    })
+    .AddHttpMessageHandler<JwtAuthorizationHandler>();
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("LegalDoc.API"));
 builder.Services.AddScoped<DocumentService>();
 builder.Services.AddScoped<RegistryService>();
 builder.Services.AddScoped<LawyerService>();

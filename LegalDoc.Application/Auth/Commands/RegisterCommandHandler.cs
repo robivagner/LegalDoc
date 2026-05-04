@@ -1,12 +1,13 @@
-﻿using LegalDoc.Application.Auth.Commands;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+
+namespace LegalDoc.Application.Auth.Commands;
 
 public class RegisterCommandHandler(UserManager<IdentityUser> userManager) : IRequestHandler<RegisterCommand, Unit>
 {
     public async Task<Unit> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var user = new IdentityUser { UserName = request.UserName, Email = request.Email };
+        var user = new IdentityUser { UserName = request.UserName};
         var result = await userManager.CreateAsync(user, request.Password);
 
         if (!result.Succeeded)

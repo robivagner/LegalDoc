@@ -16,7 +16,7 @@ public class LawyerWorkflowTests
         var repository = new LawyerRepository(context);
         var handler = new CreateLawyerCommandHandler(repository);
         
-        var command = new CreateLawyerCommand("Integration Handler Test", "123", "h@test.com");
+        var command = new CreateLawyerCommand(Guid.NewGuid(),"Integration Handler Test", "123", "h@test.com");
 
         // Act
         var lawyerId = await handler.Handle(command, CancellationToken.None);

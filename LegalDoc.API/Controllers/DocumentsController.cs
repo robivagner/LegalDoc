@@ -9,6 +9,7 @@ namespace LegalDoc.API.Controllers;
 
 [ApiController]
 [Route("api/v1/documents")]
+[Authorize]
 public class DocumentsController(IMediator mediator) : ControllerBase
 {
     [Authorize(Roles = "Lawyer")]
@@ -34,6 +35,7 @@ public class DocumentsController(IMediator mediator) : ControllerBase
         return Created($"api/v1/documents/{id}", new { id });
     }
 
+    [Authorize(Roles = "Admin,Lawyer,Viewer")]
     [HttpGet]
     public async Task<IActionResult> GetDocuments([FromQuery] Guid? documentId, [FromQuery] Guid? registryId, [FromQuery] DocumentStatus? status)
     {
@@ -42,23 +44,14 @@ public class DocumentsController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
     
+    [Authorize(Roles = "Admin,Lawyer,Viewer")]
     [HttpGet("{documentId}/file")]
     public async Task<IActionResult> GetDocumentFile([FromRoute] Guid documentId)
     {
-        var query = new GetDocumentsQuery(DocumentId: documentId);
+        var query = new GetDocumentFileQuery(documentId);
         var result = await mediator.Send(query);
-        var document = result.FirstOrDefault();
-
-        if (document == null) return NotFound("Document negăsit.");
-    
-        if (string.IsNullOrEmpty(document.StoragePath) || !System.IO.File.Exists(document.StoragePath))
-        {
-            return NotFound("Fișierul fizic lipsește de pe server.");
-        }
         
-        var bytes = await System.IO.File.ReadAllBytesAsync(document.StoragePath);
-        
-        return File(bytes, "application/pdf", document.FileName);
+        return File(result.Content, result.ContentType, result.FileName);
     }
     
     [Authorize(Roles = "Lawyer")]

@@ -14,7 +14,7 @@ public class CreateLawyerTests
         // Arrange
         var repoMock = new Mock<ILawyerRepository>();
         var handler = new CreateLawyerCommandHandler(repoMock.Object);
-        var command = new CreateLawyerCommand("Ion Popescu", "RO12345", "ion@popescu.ro");
+        var command = new CreateLawyerCommand(Guid.NewGuid(), "Ion Popescu", "RO12345", "ion@popescu.ro");
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);

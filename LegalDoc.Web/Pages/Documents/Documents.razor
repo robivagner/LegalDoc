@@ -76,7 +76,7 @@
     <MudTable Items="@FilteredDocuments" 
               Hover="true" 
               Bordered="false" 
-              Striped="true" 
+              Striped="false" 
               Elevation="4" 
               Loading="@_loading"
               Breakpoint="Breakpoint.Sm"
@@ -160,7 +160,7 @@
                     <MudIconButton Icon="@Icons.Material.Filled.Download"
                                    Color="Color.Default"
                                    Size="Size.Small"
-                                   OnClick="@(() => DownloadDocument(context.Id))" />
+                                   OnClick="@(() => DownloadDocument(context))" />
                 </MudTooltip>
             </MudTd>
         </RowTemplate>
@@ -309,16 +309,16 @@
         }
     }
     
-    private void DownloadDocument(Guid documentId)
+    private async Task DownloadDocument(DocumentDto doc)
     {
         try
         {
-            Snackbar.Add("Se pregătește descărcarea...", Severity.Info);
-            DocService.DownloadDocument(documentId);
+            Snackbar.Add($"Se descarcă {doc.FileName}...", Severity.Info);
+            await DocService.DownloadDocumentAsync(doc.Id, doc.FileName);
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Eroare la inițierea descărcării: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Eroare la descărcare: {ex.Message}", Severity.Error);
         }
     }
 

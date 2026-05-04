@@ -2,4 +2,4 @@
 
 namespace LegalDoc.Application.Auth.Commands;
 
-public record RegisterCommand(string UserName, string Email, string Password) : IRequest<Unit>;
+public record RegisterCommand(string UserName, string Password) : IRequest<Unit>;

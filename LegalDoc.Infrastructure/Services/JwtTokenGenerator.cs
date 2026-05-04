@@ -8,11 +8,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LegalDoc.Infrastructure.Services;
 
-public class JwtTokenGenerator(IConfiguration _config) : IJwtTokenGenerator
+public class JwtTokenGenerator(IConfiguration config) : IJwtTokenGenerator
 {
     public string GenerateToken(IdentityUser user, IList<string> roles)
     {
-        var jwtSecret = _config["JwtSettings:Secret"] ?? throw new InvalidOperationException("JWT Secret is missing");
+        var jwtSecret = config["JwtSettings:Secret"] ?? throw new InvalidOperationException("JWT Secret is missing");
         var key = Encoding.ASCII.GetBytes(jwtSecret);
 
         var claims = new List<Claim>

@@ -1,0 +1,79 @@
+﻿@page "/complete-profile"
+@inject Services.LawyerService LawyerService
+@inject State.AppState AppState
+@inject NavigationManager NavManager
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16">
+    <MudPaper Elevation="4" Class="pa-8" Style="border-radius: 16px;">
+        <MudStack Spacing="4">
+            <MudText Typo="Typo.h4" Align="Align.Center" Color="Color.Primary" Style="font-weight: 800">Finalizare Profil</MudText>
+            <MudText Typo="Typo.body1" Align="Align.Center">Introdu detaliile profesionale pentru a activa contul de avocat.</MudText>
+            
+            <MudTextField @bind-Value="_model.Name" Label="Nume Complet" Variant="Variant.Outlined" FullWidth 
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
+            
+            <MudTextField @bind-Value="_model.BarNumber" Label="Număr Barou" Variant="Variant.Outlined" FullWidth 
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Badge" />
+
+            <MudTextField @bind-Value="_model.Email" Label="Email de Contact" Variant="Variant.Outlined" FullWidth 
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" 
+                          HelperText="Email-ul care va apărea pe documentele generate" />
+            
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Primary" 
+                       Size="Size.Large" 
+                       FullWidth 
+                       OnClick="SubmitProfile"
+                       Disabled="_processing"
+                       Class="mt-4"
+                       Style="height: 56px; border-radius: 8px;">
+                @if (_processing) { <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" /> }
+                else { <MudText>Activează Profilul</MudText> }
+            </MudButton>
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private Model _model = new();
+    private bool _processing;
+
+    private async Task SubmitProfile()
+    {
+        if (string.IsNullOrWhiteSpace(_model.Name) || 
+            string.IsNullOrWhiteSpace(_model.BarNumber) || 
+            string.IsNullOrWhiteSpace(_model.Email))
+        {
+            Snackbar.Add("Toate câmpurile sunt obligatorii!", Severity.Warning);
+            return;
+        }
+
+        _processing = true;
+        try 
+        {
+            await LawyerService.CreateLawyerAsync(_model.Name, _model.BarNumber, _model.Email);
+            
+            AppState.UpdateProfileStatus(false);
+            
+            Snackbar.Add("Profil activat cu succes! Bine ai venit.", Severity.Success);
+            
+            NavManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Eroare: " + ex.Message, Severity.Error);
+        }
+        finally
+        {
+            _processing = false;
+        }
+    }
+
+    public class Model 
+    { 
+        public string Name { get; set; } = ""; 
+        public string BarNumber { get; set; } = ""; 
+        public string Email { get; set; } = ""; 
+    }
+}

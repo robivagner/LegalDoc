@@ -43,7 +43,7 @@ public class AssignReviewTaskTests
         typeof(LegalDocument).GetProperty(nameof(LegalDocument.Status))?
             .SetValue(document, DocumentStatus.AwaitingReview);
 
-        var lawyer = Lawyer.Create("Avocat Test", "123", "test@mail.com");
+        var lawyer = Lawyer.Create(Guid.NewGuid(), "Avocat Test", "123", "test@mail.com");
         lawyer.UpdateLawyerActivity(false); // Il facem inactiv
 
         _docRepoMock.Setup(x => x.FindAsync(docId, It.IsAny<CancellationToken>())).ReturnsAsync(document);
@@ -71,7 +71,7 @@ public class AssignReviewTaskTests
         typeof(LegalDocument).GetProperty(nameof(LegalDocument.Status))?
             .SetValue(document, DocumentStatus.AwaitingReview);
 
-        var lawyer = Lawyer.Create("Avocat Activ", "123", "active@mail.com");
+        var lawyer = Lawyer.Create(Guid.NewGuid(), "Avocat Activ", "123", "active@mail.com");
 
         _docRepoMock.Setup(x => x.FindAsync(docId, It.IsAny<CancellationToken>())).ReturnsAsync(document);
         _lawyerRepoMock.Setup(x => x.FindAsync(lawyerId, It.IsAny<CancellationToken>())).ReturnsAsync(lawyer);

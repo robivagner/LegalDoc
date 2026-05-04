@@ -11,9 +11,13 @@ public class ReviewTaskService(HttpClient http)
         return response ?? new List<ReviewTaskDto>();
     }
     
-    public async Task<List<ReviewTaskDto>> GetTasksByStatusAsync(string status)
+    public async Task<List<ReviewTaskDto>> GetTasksFilteredAsync(Guid? lawyerId = null, string? status = null)
     {
-        var response = await http.GetFromJsonAsync<List<ReviewTaskDto>>($"api/v1/review-tasks?status={status}");
+        var query = "api/v1/review-tasks?";
+        if (lawyerId.HasValue) query += $"lawyerId={lawyerId}&";
+        if (!string.IsNullOrEmpty(status)) query += $"status={status}";
+
+        var response = await http.GetFromJsonAsync<List<ReviewTaskDto>>(query);
         return response ?? new List<ReviewTaskDto>();
     }
     

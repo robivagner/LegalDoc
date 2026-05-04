@@ -2,6 +2,7 @@
 @using LegalDoc.Web.Services
 @inject RegistryService RegService
 @inject ISnackbar Snackbar
+@using MudBlazor
 
 <MudDialog>
     <TitleContent>
@@ -23,12 +24,11 @@
             }
         </MudSelect>
         
-        <MudFileUpload T="IBrowserFile" FilesChanged="OnFileChanged" Class="mt-4">
+        <MudFileUpload T="IBrowserFile?" FilesChanged="OnFileChanged" Class="mt-4">
             <ActivatorContent>
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Primary"
                            StartIcon="@Icons.Material.Filled.CloudUpload">
-                    @* Afișăm numele fișierului dacă este selectat, altfel un text generic *@
                     @(_file == null ? "Alege fișierul juridic" : _file.Name)
                 </MudButton>
             </ActivatorContent>

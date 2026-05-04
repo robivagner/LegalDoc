@@ -27,6 +27,7 @@ async def process_document(request: AnalysisRequest):
         result = await analyzer.analyze(request.content)
         return result
     except Exception as e:
+        print(f"CRASH: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":

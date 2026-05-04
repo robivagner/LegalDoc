@@ -1,4 +1,5 @@
 ﻿using LegalDoc.Application.Abstractions;
+using LegalDoc.Application.Auth.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -18,6 +19,6 @@ public class LoginCommandHandler(UserManager<IdentityUser> userManager, IJwtToke
         var roles = await userManager.GetRolesAsync(user);
         var token = tokenGenerator.GenerateToken(user, roles);
         
-        return new AuthResponse(token, user.UserName ?? user.Email!, user.Email!);
+        return new AuthResponse(token, user.UserName);
     }
 }
