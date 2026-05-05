@@ -1,3 +1,5 @@
+using System;
+using System.Net.Http;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using LegalDoc.Web;
@@ -7,6 +9,7 @@ using LegalDoc.Web.Services;
 using LegalDoc.Web.State;
 using Microsoft.AspNetCore.Components.Authorization;
 using LegalDoc.Web.Auth;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 

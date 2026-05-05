@@ -1,4 +1,4 @@
-﻿@page "/documents"
+@page "/documents"
 @using LegalDoc.Web.Models
 @using LegalDoc.Web.Services
 @inject DocumentService DocService
@@ -54,13 +54,19 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" sm="6" md="2">
-                    <MudSelect T="string" Label="Status" @bind-Value="_filterStatus" Clearable="true">
-                        <MudSelectItem Value="@("")">Toate</MudSelectItem>
-                        <MudSelectItem Value="@("Uploaded")">Uploaded</MudSelectItem>
-                        <MudSelectItem Value="@("AwaitingReview")">AwaitingReview</MudSelectItem>
-                        <MudSelectItem Value="@("InReview")">InReview</MudSelectItem>
-                        <MudSelectItem Value="@("Completed")">Completed</MudSelectItem>
-                        <MudSelectItem Value="@("Rejected")">Rejected</MudSelectItem>
+                    <MudSelect T="string" 
+                               Label="Status" 
+                               @bind-Value="_filterStatus" 
+                               Clearable="true" 
+                               Placeholder="Alege Status"
+                               ShrinkLabel="true"
+                               AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem T="string" Value="@(null)">Toate</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Uploaded")">Uploaded</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("AwaitingReview")">AwaitingReview</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("InReview")">InReview</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Rejected")">Rejected</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Completed")">Completed</MudSelectItem>
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" sm="12" md="2">
@@ -103,7 +109,7 @@
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => x.Status)">
+                <MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => GetStatusWeight(x.Status))">
                     Status
                 </MudTableSortLabel>
             </MudTh>
@@ -181,7 +187,7 @@
     private string _searchFileName = "";
     private string _searchId = "";
     private Guid? _filterRegistryId;
-    private string _filterStatus = "";
+    private string _filterStatus = null;
 
     // Proprietatea care filtrează lista în memorie
     private IEnumerable<DocumentDto> FilteredDocuments => _documents.Where(doc =>
@@ -197,8 +203,8 @@
 
         if (_filterRegistryId.HasValue && doc.RegistryId != _filterRegistryId.Value)
             return false;
-
-        if (!string.IsNullOrWhiteSpace(_filterStatus) && doc.Status != _filterStatus)
+        
+        if (!string.IsNullOrEmpty(_filterStatus) && doc.Status != _filterStatus)
             return false;
 
         return true;
@@ -333,5 +339,20 @@
         };
 
         await DialogService.ShowAsync<DocumentPreviewDialog>("Previzualizare și Analiză", parameters, options);
+    }
+    
+    private int GetStatusWeight(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return 0;
+
+        return status.Trim() switch
+        {
+            "Uploaded"       => 1,
+            "AwaitingReview" => 2,
+            "InReview"       => 3,
+            "Rejected"       => 4,
+            "Completed"      => 5,
+            _                => 0
+        };
     }
 }

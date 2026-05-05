@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // --- 1. BAZA DE DATE ---
+// Folosește "Postgres" din Docker Compose sau appsettings
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
@@ -67,6 +68,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
 });
 
+// Înregistrare validatoare și MediatR
 builder.Services.AddValidatorsFromAssembly(typeof(IDocumentsRepository).Assembly);
 builder.Services.AddFluentValidationAutoValidation();
 
@@ -122,24 +124,42 @@ builder.Services.AddHttpClient<IAiService, AiService>();
 
 var app = builder.Build();
 
-// --- 7. MIDDLEWARE ---
+// --- 7. INITIALIZARE BAZA DE DATE (Migrări + Seed) ---
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        
+        // ACEASTA ESTE LINIA CARE REPARĂ EROAREA: 
+        // Creează tabelele în baza de date dacă nu există
+        await context.Database.MigrateAsync(); 
+        
+        // Populează baza de date cu date inițiale
+        await DbInitializer.SeedAsync(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "A apărut o eroare la migrarea sau seed-uirea bazei de date.");
+    }
+}
+
+// --- 8. MIDDLEWARE PIPELINE ---
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Legal Document API V1");
-        c.RoutePrefix = string.Empty;
+        c.RoutePrefix = string.Empty; // Deschide Swagger direct pe localhost:5000
     });
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    await DbInitializer.SeedAsync(scope.ServiceProvider);
-}
-
-app.UseHttpsRedirection();
 app.UseCors("BlazorPolicy");
+
+// Autentificarea trebuie să fie înainte de Autorizare
 app.UseAuthentication();
 app.UseAuthorization();
 

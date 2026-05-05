@@ -1,0 +1,58 @@
+﻿services:
+  legaldoc-db:
+    image: postgres:15-alpine
+    container_name: legaldoc-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # Folosim variabilele și aici pentru a evita erorile la verificarea stării
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  legaldoc-ai:
+    build:
+      context: ./Python
+    container_name: legaldoc-ai
+    restart: unless-stopped
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --loop asyncio
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "8000:8000"
+
+  legaldoc-api:
+    build:
+      context: ./Backend
+    container_name: legaldoc-api
+    restart: on-failure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Postgres=Host=legaldoc-db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      - AiServiceSettings__BaseUrl=http://legaldoc-ai:8000
+    ports:
+      - "5000:8080"
+    depends_on:
+      legaldoc-db:
+        condition: service_healthy
+
+  legaldoc-web:
+    build:
+      context: ./Frontend
+    container_name: legaldoc-web
+    restart: unless-stopped
+    ports:
+      - "5100:80"
+    depends_on:
+      - legaldoc-api
+
+volumes:
+  pgdata:

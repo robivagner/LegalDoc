@@ -3,8 +3,12 @@ import json
 import asyncio
 from google import genai
 from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv()
+current_dir = Path(__file__).parent
+env_path = current_dir.parent / '.env'
+
+is_loaded = load_dotenv(dotenv_path=env_path, override=True)
 
 class DocumentAnalyzer:
     def __init__(self):

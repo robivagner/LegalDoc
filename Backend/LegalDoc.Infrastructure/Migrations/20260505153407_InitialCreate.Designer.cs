@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LegalDoc.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260503125726_AddIdentityPostgres")]
-    partial class AddIdentityPostgres
+    [Migration("20260505153407_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -37,6 +37,7 @@ namespace LegalDoc.Infrastructure.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 

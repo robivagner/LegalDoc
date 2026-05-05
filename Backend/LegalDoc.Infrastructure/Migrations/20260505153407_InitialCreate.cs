@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LegalDoc.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIdentityPostgres : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,6 +49,57 @@ namespace LegalDoc.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Lawyers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    BarNumber = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lawyers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LegalDocuments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RegistryId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    FileName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    StoragePath = table.Column<string>(type: "text", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    Summary = table.Column<string>(type: "text", nullable: true),
+                    Clauses = table.Column<string>(type: "text", nullable: true),
+                    Risks = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LegalDocuments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Registries",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Location = table.Column<string>(type: "text", nullable: false),
+                    Capacity = table.Column<int>(type: "integer", nullable: false),
+                    Availability = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Registries", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,6 +208,34 @@ namespace LegalDoc.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ReviewTasks",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DocumentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LawyerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    AssignedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReviewTasks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReviewTasks_Lawyers_LawyerId",
+                        column: x => x.LawyerId,
+                        principalTable: "Lawyers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ReviewTasks_LegalDocuments_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "LegalDocuments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -193,6 +272,16 @@ namespace LegalDoc.Infrastructure.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReviewTasks_DocumentId",
+                table: "ReviewTasks",
+                column: "DocumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReviewTasks_LawyerId",
+                table: "ReviewTasks",
+                column: "LawyerId");
         }
 
         /// <inheritdoc />
@@ -214,10 +303,22 @@ namespace LegalDoc.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Registries");
+
+            migrationBuilder.DropTable(
+                name: "ReviewTasks");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Lawyers");
+
+            migrationBuilder.DropTable(
+                name: "LegalDocuments");
         }
     }
 }
