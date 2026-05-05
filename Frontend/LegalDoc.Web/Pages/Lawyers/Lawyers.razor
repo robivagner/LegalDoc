@@ -1,0 +1,229 @@
+﻿@page "/lawyers"
+@using LegalDoc.Web.Models
+@using LegalDoc.Web.Services
+@inject LawyerService LawyerSvc
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject State.AppState AppState
+@inject NavigationManager NavManager
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-16 mt-6">
+    @* --- HEADER ȘI BUTOANE --- *@
+    <div class="d-flex align-center mb-6">
+        <MudText Typo="Typo.h4" Color="Color.Primary" Style="font-weight: 700">Echipă Avocați</MudText>
+        <MudSpacer />
+        
+        @if (AppState.NeedsProfileCompletion)
+        {
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Warning" 
+                       StartIcon="@Icons.Material.Filled.AssignmentInd" 
+                       OnClick="@(() => NavManager.NavigateTo("/complete-profile"))"
+                       Class="mr-4">
+                Completează-ți Profilul
+            </MudButton>
+        }
+        
+        @* Buton Toggle pentru Filtre *@
+        <MudToggleIconButton @bind-Toggled="@_filtersVisible"
+                             Icon="@Icons.Material.Filled.FilterList"
+                             Color="Color.Default"
+                             ToggledIcon="@Icons.Material.Filled.FilterListOff"
+                             ToggledColor="Color.Secondary"
+                             AriaLabel="Filtrează avocați"
+                             Class="mr-2" />
+    </div>
+
+    @* --- PANEL FILTRE --- *@
+    <MudCollapse Expanded="_filtersVisible">
+        <MudPaper Elevation="2" Class="pa-4 mb-6 border-solid border-2 mud-border-secondary">
+            <MudGrid>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudTextField @bind-Value="_searchName" Placeholder="Caută nume avocat..." 
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.PersonSearch" 
+                                  Clearable="true" Immediate="true" Label="Nume Avocat" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="2">
+                    <MudTextField @bind-Value="_searchBarNumber" Placeholder="Caută barou..." 
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Numbers" 
+                                  Clearable="true" Immediate="true" Label="Număr Barou" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudTextField @bind-Value="_searchEmail" Placeholder="Caută email..." 
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" 
+                                  Clearable="true" Immediate="true" Label="Email" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="2">
+                    <MudSelect T="bool?" Label="Status" @bind-Value="_searchIsActive" Clearable="true">
+                        <MudSelectItem T="bool?" Value="null">Toate</MudSelectItem>
+                        <MudSelectItem T="bool?" Value="true">Activ</MudSelectItem>
+                        <MudSelectItem T="bool?" Value="false">Inactiv</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="2">
+                    <MudTextField @bind-Value="_searchId" Placeholder="Caută ID..." 
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Fingerprint" 
+                                  Clearable="true" Immediate="true" Label="ID Avocat" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudCollapse>
+
+    @* --- TABEL PRINCIPAL --- *@
+    <MudTable Items="@FilteredLawyers" 
+              Hover="true" 
+              Elevation="4" 
+              Loading="@_loading" 
+              Striped="false"
+              SortLabel="Sortează după">
+        <HeaderContent>
+            <MudTh>
+                <MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LawyerDto, object>(x => x.Name)">
+                    Nume Avocat
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<LawyerDto, object>(x => x.BarNumber)">
+                    Număr Barou
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<LawyerDto, object>(x => x.Email ?? string.Empty)">
+                    Email
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<LawyerDto, object>(x => x.IsActive)">
+                    Status
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<LawyerDto, object>(x => x.Id)">
+                    ID Avocat
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh Style="text-align: right">Acțiuni</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Nume Avocat">
+                <div class="d-flex align-center gap-3">
+                    <MudAvatar Color="Color.Primary" Size="Size.Small">
+                        @(string.IsNullOrWhiteSpace(context.Name) ? "?" : context.Name.Substring(0, 1).ToUpper())
+                    </MudAvatar>
+                    <MudText Typo="Typo.body2" Style="font-weight: 500;">@context.Name</MudText>
+                </div>
+            </MudTd>
+            
+            <MudTd DataLabel="Număr Barou">
+                <MudText Typo="Typo.body2" Style="font-family: monospace;">@context.BarNumber</MudText>
+            </MudTd>
+            
+            <MudTd DataLabel="Email">
+                @if (!string.IsNullOrEmpty(context.Email))
+                {
+                    <MudLink Href="@($"mailto:{context.Email}")" Typo="Typo.body2">@context.Email</MudLink>
+                }
+                else
+                {
+                    <MudText Typo="Typo.body2" Color="Color.Surface">N/A</MudText>
+                }
+            </MudTd>
+            
+            <MudTd DataLabel="Status">
+                <MudChip T="string" Color="@(context.IsActive ? Color.Success : Color.Default)" Size="Size.Small" Variant="Variant.Filled" Style="font-weight: 600;">
+                    @(context.IsActive ? "Activ" : "Inactiv")
+                </MudChip>
+            </MudTd>
+            
+            <MudTd DataLabel="ID Avocat">
+                <MudText Typo="Typo.caption" Style="font-family: monospace; color: gray;">
+                    @context.Id
+                </MudText>
+            </MudTd>
+            
+            <MudTd DataLabel="Acțiuni" Style="text-align: right">
+                <MudTooltip Text="@(context.IsActive ? "Dezactivează Cont" : "Activează Cont")">
+                    <MudIconButton Icon="@(context.IsActive ? Icons.Material.Filled.PersonOff : Icons.Material.Filled.HowToReg)" 
+                                   Color="@(context.IsActive ? Color.Warning : Color.Success)" 
+                                   Size="Size.Small" 
+                                   OnClick="@(() => ToggleLawyerStatus(context))" />
+                </MudTooltip>
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body1">Nu a fost găsit niciun avocat care să corespundă criteriilor.</MudText>
+        </NoRecordsContent>
+    </MudTable>
+</MudContainer>
+
+@code {
+    private List<LawyerDto> _lawyers = new();
+    private bool _loading = true;
+
+    // --- State Filtre ---
+    private bool _filtersVisible = false;
+    private string _searchName = "";
+    private string _searchBarNumber = "";
+    private string _searchEmail = "";
+    private string _searchId = "";
+    private bool? _searchIsActive = null;
+
+    // --- Proprietate calculată pentru filtrare realtime ---
+    private IEnumerable<LawyerDto> FilteredLawyers => _lawyers.Where(l =>
+    {
+        if (!string.IsNullOrWhiteSpace(_searchName) && !l.Name.Contains(_searchName, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(_searchBarNumber) && !l.BarNumber.Contains(_searchBarNumber, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(_searchEmail) && (l.Email == null || !l.Email.Contains(_searchEmail, StringComparison.OrdinalIgnoreCase)))
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(_searchId) && !l.Id.ToString().Contains(_searchId, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        if (_searchIsActive.HasValue && l.IsActive != _searchIsActive.Value)
+            return false;
+
+        return true;
+    });
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Am curățat logica de verificare a profilului de aici.
+        await LoadLawyers();
+    }
+
+    private async Task LoadLawyers()
+    {
+        try 
+        {
+            _loading = true;
+            _lawyers = await LawyerSvc.GetLawyersAsync();
+        }
+        catch (Exception ex) 
+        {
+            Snackbar.Add("Eroare la încărcarea avocaților: " + ex.Message, Severity.Error);
+        }
+        finally 
+        {
+            _loading = false;
+        }
+    }
+    
+    private async Task ToggleLawyerStatus(LawyerDto lawyer)
+    {
+        try 
+        {
+            bool newStatus = !lawyer.IsActive;
+            await LawyerSvc.UpdateLawyerActivityAsync(lawyer.Id, newStatus);
+            await LoadLawyers();
+            Snackbar.Add($"Avocatul a fost {(newStatus ? "activat" : "dezactivat")} cu succes!", Severity.Success);
+        }
+        catch (Exception ex) 
+        {
+            Snackbar.Add("Eroare la modificarea statusului: " + ex.Message, Severity.Error);
+        }
+    }
+}

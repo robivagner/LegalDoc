@@ -1,0 +1,98 @@
+﻿@page "/"
+@inject State.AppState AppState
+@implements IDisposable
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+    @* Banner de avertizare pentru onboarding *@
+    @if (AppState.NeedsProfileCompletion)
+    {
+        <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Class="mb-8 rounded-lg shadow-lg">
+            <MudText Typo="Typo.body1" Style="font-weight: 700">
+                ⚠️ Acces Limitat: Te rugăm să îți completezi profilul de avocat folosind meniul din stânga pentru a activa toate funcționalitățile.
+            </MudText>
+        </MudAlert>
+    }
+
+    <MudText Typo="Typo.h3" GutterBottom="true" Style="font-weight: 800" Color="Color.Primary">
+        Bun venit în LegalDoc AI
+    </MudText>
+    <MudText Typo="Typo.body1" Class="mb-8" Style="font-size: 1.1rem; color: var(--mud-palette-text-secondary);">
+        Sistem inteligent de analiză și arhivare a documentelor juridice.
+    </MudText>
+
+    <MudGrid Spacing="4">
+        
+        @* --- RANDUL 1 --- *@
+        <MudItem xs="12" sm="6" md="6">
+            <MudPaper Class="pa-6" Elevation="3" Style="@GetCardStyle()">
+                <div class="d-flex align-center mb-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary" Class="mr-3" />
+                    <MudText Typo="Typo.h6">Documente</MudText>
+                </div>
+                <MudText Typo="Typo.body2" Class="flex-grow-1 mb-4">Gestionează arhiva centralizată de contracte și documente juridice.</MudText>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" href="/documents" FullWidth="true" 
+                           Disabled="@AppState.NeedsProfileCompletion">Vezi Arhiva</MudButton>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="6">
+            <MudPaper Class="pa-6" Elevation="3" Style="@GetCardStyle()">
+                <div class="d-flex align-center mb-3">
+                    <MudIcon Icon="@Icons.Material.Filled.AccountBalance" Color="Color.Primary" Class="mr-3" />
+                    <MudText Typo="Typo.h6">Registre</MudText>
+                </div>
+                <MudText Typo="Typo.body2" Class="flex-grow-1 mb-4">Administrează registrele și categoriile în care sunt organizate documentele.</MudText>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" href="/registries" FullWidth="true" 
+                           Disabled="@AppState.NeedsProfileCompletion">Gestionare Registre</MudButton>
+            </MudPaper>
+        </MudItem>
+
+        @* --- RANDUL 2 --- *@
+        <MudItem xs="12" sm="6" md="6">
+            <MudPaper Class="pa-6" Elevation="3" Style="@GetCardStyle()">
+                <div class="d-flex align-center mb-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Gavel" Color="Color.Secondary" Class="mr-3" />
+                    <MudText Typo="Typo.h6">Avocați</MudText>
+                </div>
+                <MudText Typo="Typo.body2" Class="flex-grow-1 mb-4">Vizualizează și gestionează directorul de avocați alocați cazurilor.</MudText>
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" href="/lawyers" FullWidth="true" 
+                           Disabled="@AppState.NeedsProfileCompletion">Vezi Director</MudButton>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="6">
+            <MudPaper Class="pa-6" Elevation="3" Style="@GetCardStyle()">
+                <div class="d-flex align-center mb-3">
+                    <MudIcon Icon="@Icons.Material.Filled.Assignment" Color="Color.Info" Class="mr-3" />
+                    <MudText Typo="Typo.h6">Sarcini Review</MudText>
+                </div>
+                <MudText Typo="Typo.body2" Class="flex-grow-1 mb-4">Verifică stadiul analizelor umane și sarcinile de aprobare în așteptare.</MudText>
+                <MudButton Variant="Variant.Outlined" Color="Color.Info" href="/tasks" FullWidth="true" 
+                           Disabled="@AppState.NeedsProfileCompletion">Vezi Sarcini</MudButton>
+            </MudPaper>
+        </MudItem>
+
+    </MudGrid>
+</MudContainer>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private string GetCardStyle()
+    {
+        var baseStyle = "height: 100%; display: flex; flex-direction: column; transition: all 0.3s ease;";
+        if (AppState.NeedsProfileCompletion)
+        {
+            return baseStyle + " opacity: 0.5; filter: grayscale(1); pointer-events: none;";
+        }
+        return baseStyle;
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

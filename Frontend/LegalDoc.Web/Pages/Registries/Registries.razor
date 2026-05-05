@@ -1,0 +1,181 @@
+﻿@page "/registries"
+@using LegalDoc.Web.Models
+@using LegalDoc.Web.Services
+@inject RegistryService RegService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-16 mt-6">
+    @* --- HEADER ȘI BUTOANE --- *@
+    <div class="d-flex align-center mb-6">
+        <MudText Typo="Typo.h4" Color="Color.Primary" Style="font-weight: 700">Registre și Arhive</MudText>
+        <MudSpacer />
+        
+        @* Buton Toggle pentru Filtre *@
+        <MudToggleIconButton @bind-Toggled="@_filtersVisible"
+                             Icon="@Icons.Material.Filled.FilterList"
+                             Color="Color.Default"
+                             ToggledIcon="@Icons.Material.Filled.FilterListOff"
+                             ToggledColor="Color.Secondary"
+                             Title="Filtrează registre"
+                             Class="mr-2" />
+
+        <MudButton Variant="Variant.Filled" 
+                   Color="Color.Secondary" 
+                   OnClick="OpenCreateDialog"
+                   StartIcon="@Icons.Material.Filled.AddHomeWork">
+            Registru Nou
+        </MudButton>
+    </div>
+
+    @* --- PANEL FILTRE --- *@
+    <MudCollapse Expanded="_filtersVisible">
+        <MudPaper Elevation="2" Class="pa-4 mb-6 border-solid border-2 mud-border-secondary">
+            <MudGrid>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudTextField @bind-Value="_searchName" Placeholder="Caută nume registru..." 
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Folder" 
+                                  Clearable="true" Immediate="true" Label="Nume Registru" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudTextField @bind-Value="_searchLocation" Placeholder="Caută locație..." 
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Place" 
+                                  Clearable="true" Immediate="true" Label="Locație" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudNumericField @bind-Value="_searchMinCapacity" Label="Capacitate Minimă" 
+                                     Min="0" Clearable="true" Immediate="true" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudTextField @bind-Value="_searchId" Placeholder="Caută ID..." 
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Fingerprint" 
+                                  Clearable="true" Immediate="true" Label="ID Registru" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudCollapse>
+
+    @* --- TABEL PRINCIPAL --- *@
+    <MudTable Items="@FilteredRegistries" 
+              Hover="true" 
+              Elevation="4" 
+              Loading="@_loading" 
+              Striped="false"
+              SortLabel="Sortează după">
+        <HeaderContent>
+            <MudTh>
+                <MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<RegistryDto, object>(x => x.Name)">
+                    Nume Registru
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<RegistryDto, object>(x => x.Location)">
+                    Locație Fizică
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<RegistryDto, object>(x => x.Capacity)">
+                    Capacitate
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<RegistryDto, object>(x => x.Availability)">
+                    Disponibilitate
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<RegistryDto, object>(x => x.Id)">
+                    ID Registru
+                </MudTableSortLabel>
+            </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Nume">
+                <MudText Typo="Typo.body1" Style="font-weight: 500">@context.Name</MudText>
+            </MudTd>
+            <MudTd DataLabel="Locație">@context.Location</MudTd>
+            <MudTd DataLabel="Capacitate" Style="width: 100px;">@context.Capacity</MudTd>
+            <MudTd DataLabel="Disponibilitate" Style="width: 250px;">
+                <div class="d-flex align-center gap-3">
+                    <MudText Typo="Typo.body2" Style="white-space: nowrap; font-weight: 500;">
+                        @context.Availability rămas
+                    </MudText>
+                    <MudProgressLinear Color="@(context.Availability < 10 ? Color.Error : Color.Success)" 
+                                       Value="@(Convert.ToDouble(context.Availability))" 
+                                       Max="@(Convert.ToDouble(context.Capacity))" 
+                                       Class="flex-grow-1" />
+                </div>
+            </MudTd>
+            <MudTd DataLabel="ID">
+                <MudText Typo="Typo.caption" Style="font-family: monospace; color: gray;">
+                    @context.Id
+                </MudText>
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body1">Nu am găsit niciun registru conform filtrelor aplicate.</MudText>
+        </NoRecordsContent>
+    </MudTable>
+</MudContainer>
+
+@code {
+    private List<RegistryDto> _registries = new();
+    private bool _loading = true;
+
+    // --- State Filtre ---
+    private bool _filtersVisible = false;
+    private string _searchName = "";
+    private string _searchLocation = "";
+    private string _searchId = "";
+    private int? _searchMinCapacity = null;
+
+    // --- Proprietate calculată pentru filtrare realtime ---
+    private IEnumerable<RegistryDto> FilteredRegistries => _registries.Where(r =>
+    {
+        if (!string.IsNullOrWhiteSpace(_searchName) && !r.Name.Contains(_searchName, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(_searchLocation) && !r.Location.Contains(_searchLocation, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(_searchId) && !r.Id.ToString().Contains(_searchId, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        if (_searchMinCapacity.HasValue && r.Capacity < _searchMinCapacity.Value)
+            return false;
+
+        return true;
+    });
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRegistries();
+    }
+
+    private async Task LoadRegistries()
+    {
+        try {
+            _loading = true;
+            _registries = await RegService.GetRegistriesAsync();
+        }
+        catch (Exception ex) {
+            Snackbar.Add("Eroare la încărcarea registrelor: " + ex.Message, Severity.Error);
+        }
+        finally {
+            _loading = false;
+        }
+    }
+
+    private async Task OpenCreateDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<CreateRegistryDialog>("Registru Nou", options);
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled)
+        {
+            await LoadRegistries(); // Reîncărcăm tabelul după creare
+            Snackbar.Add("Registru creat cu succes!", Severity.Success);
+        }
+    }
+}

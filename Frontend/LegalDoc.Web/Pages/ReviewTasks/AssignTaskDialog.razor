@@ -1,0 +1,62 @@
+﻿@using LegalDoc.Web.Models
+@using LegalDoc.Web.Services
+@inject ReviewTaskService TaskService
+@inject LawyerService LawyerService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudText Class="mb-4">Selectează un document din cele trimise spre analiză pentru a-l prelua.</MudText>
+        
+        <MudSelect T="Guid" Label="Documente în așteptare" @bind-Value="_selectedDocId" AnchorOrigin="Origin.BottomCenter" Required="true">
+            @foreach (var doc in AvailableDocuments)
+            {
+                <MudSelectItem Value="@doc.Id">@doc.Title</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudTextField T="string" Label="Note suplimentare (opțional)" @bind-Value="_description" Lines="3" Class="mt-4" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Anulează</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit" Disabled="@(_selectedDocId == Guid.Empty || _processing)">
+            @if (_processing) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/> }
+            Preia Task-ul
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+    
+    [Parameter] public List<DocumentDto> AvailableDocuments { get; set; } = new();
+    
+    private Guid _selectedDocId;
+    private string _description = "";
+    private bool _processing;
+
+    private async Task Submit() {
+        _processing = true;
+        try 
+        {
+            var profile = await LawyerService.GetMyProfileAsync();
+            if (profile != null)
+            {
+                await TaskService.AssignTaskAsync(_selectedDocId, profile.Id, _description);
+                Snackbar.Add("Task-ul ți-a fost asignat cu succes!", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                Snackbar.Add("Eroare: Nu s-a putut identifica profilul de avocat.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Eroare la asignare: " + ex.Message, Severity.Error);
+        }
+        finally { _processing = false; }
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

@@ -1,0 +1,73 @@
+﻿@using LegalDoc.Web.Models
+
+<MudDialog>
+    <DialogContent>
+        @* Folosim div-ul cu scroll pentru o experiență mai fluidă decât MudGrid *@
+        <div style="max-height: 70vh; overflow-y: auto; padding-right: 16px;">
+            <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4" Style="font-weight: 800;">
+                <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Class="mr-2" />Analiză Inteligentă
+            </MudText>
+
+            @if (string.IsNullOrWhiteSpace(Document.Summary) && string.IsNullOrWhiteSpace(Document.Clauses) && string.IsNullOrWhiteSpace(Document.Risks))
+            {
+                <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Class="mb-4">
+                    Nu există date de analiză disponibile pentru acest document.
+                </MudAlert>
+            }
+            else
+            {
+                @* 1. REZUMAT EXECUTIV *@
+                @if (!string.IsNullOrWhiteSpace(Document.Summary))
+                {
+                    <MudPaper Elevation="0" Class="pa-4 mb-4 mud-background-gray">
+                        <div class="d-flex align-center mb-2">
+                            <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Secondary" Class="mr-2" />
+                            <MudText Typo="Typo.subtitle1" Style="font-weight: 700;">Rezumat Executiv</MudText>
+                        </div>
+                        <MudText Typo="Typo.body2" Style="white-space: pre-wrap; line-height: 1.6;">
+                            @Document.Summary
+                        </MudText>
+                    </MudPaper>
+                }
+
+                @* 2. CLAUZE CHEIE (Am eliminat chenarul și am pus stilul de card gri) *@
+                @if (!string.IsNullOrWhiteSpace(Document.Clauses))
+                {
+                    <MudPaper Elevation="0" Class="pa-4 mb-4 mud-background-gray">
+                        <div class="d-flex align-center mb-2">
+                            <MudIcon Icon="@Icons.Material.Filled.Gavel" Color="Color.Info" Class="mr-2" />
+                            <MudText Typo="Typo.subtitle1" Style="font-weight: 700;">Clauze Cheie</MudText>
+                        </div>
+                        <MudText Typo="Typo.body2" Style="white-space: pre-wrap; line-height: 1.6;">
+                            @Document.Clauses
+                        </MudText>
+                    </MudPaper>
+                }
+
+                @* 3. RISCURI (Am adăugat pre-wrap pentru a repara lipsa liniilor noi) *@
+                @if (!string.IsNullOrWhiteSpace(Document.Risks))
+                {
+                    <MudPaper Elevation="0" Class="pa-4 mb-4 mud-background-gray">
+                        <div class="d-flex align-center mb-2">
+                            <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Error" Class="mr-2" />
+                            <MudText Typo="Typo.subtitle1" Style="font-weight: 700;">Riscuri Identificate</MudText>
+                        </div>
+                        <MudText Typo="Typo.body2" Style="white-space: pre-wrap; line-height: 1.6;">
+                            @Document.Risks
+                        </MudText>
+                    </MudPaper>
+                }
+            }
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="px-8">Închide</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public DocumentDto Document { get; set; } = null!;
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+}
