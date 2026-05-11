@@ -40,7 +40,8 @@ jobs:
         run: |
           dotnet tool install --global dotnet-sonarscanner
           python -m pip install --upgrade pip
-          pip install pytest pytest-cov httpx fastapi
+          pip install pytest pytest-cov httpx fastapi google-genai pytest-mock
+          if [ -f Python/requirements.txt ]; then pip install -r Python/requirements.txt; fi
 
       # --- 1. SCANARE SONARCLOUD ---
       - name: 🧹 SonarCloud Analysis
