@@ -40,7 +40,7 @@ jobs:
         run: |
           dotnet tool install --global dotnet-sonarscanner
           python -m pip install --upgrade pip
-          pip install pytest pytest-cov httpx fastapi google-genai pytest-mock
+          pip install pytest pytest-cov httpx fastapi google-genai pytest-mock pytest-asyncio
           if [ -f Python/requirements.txt ]; then pip install -r Python/requirements.txt; fi
 
       # --- 1. SCANARE SONARCLOUD ---
@@ -69,7 +69,8 @@ jobs:
 
           # Rulăm testele Python și generăm coverage.xml
           cd Python
-          python -m pytest --cov=. --cov-report=xml:coverage.xml
+          # SETĂM O CHEIE FALSĂ (dummy_key) ca să trecem de validarea din analyzer.py
+          GEMINI_API_KEY=dummy_key_for_testing python -m pytest --cov=. --cov-report=xml:coverage.xml
           cd ..
           
           # Finalizăm analiza și trimitem datele la SonarCloud
