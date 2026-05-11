@@ -17,7 +17,7 @@ public sealed class UploadDocumentCommandHandler(
 
         if (registry == null)
         {
-            throw new Exception("Registry not found!");
+            throw new KeyNotFoundException("Registry not found!");
         }
         
         registry.DocumentAdded();

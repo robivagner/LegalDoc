@@ -10,7 +10,7 @@ public class UpdateLawyerActivityCommandHandler(ILawyerRepository repository) : 
         var lawyer = await repository.FindAsync(request.LawyerId, cancellationToken);
         
         if (lawyer == null)
-            throw new Exception("Lawyer not found.");
+            throw new KeyNotFoundException("Lawyer not found.");
         
         lawyer.UpdateLawyerActivity(request.IsActive);
         

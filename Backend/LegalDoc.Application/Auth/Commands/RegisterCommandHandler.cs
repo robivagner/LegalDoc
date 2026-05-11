@@ -13,7 +13,7 @@ public class RegisterCommandHandler(UserManager<IdentityUser> userManager) : IRe
         if (!result.Succeeded)
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new Exception($"Registration failed: {errors}");
+            throw new InvalidOperationException($"Registration failed: {errors}");
         }
 
         await userManager.AddToRoleAsync(user, "Viewer");

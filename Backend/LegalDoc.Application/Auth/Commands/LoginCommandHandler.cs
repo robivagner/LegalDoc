@@ -11,14 +11,15 @@ public class LoginCommandHandler(UserManager<IdentityUser> userManager, IJwtToke
     public async Task<AuthResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByNameAsync(request.UserName);
+
         if (user == null || !await userManager.CheckPasswordAsync(user, request.Password))
         {
             throw new UnauthorizedAccessException("Invalid credentials");
         }
-        
+    
         var roles = await userManager.GetRolesAsync(user);
         var token = tokenGenerator.GenerateToken(user, roles);
         
-        return new AuthResponse(token, user.UserName);
+        return new AuthResponse(token, user.UserName ?? request.UserName);
     }
 }

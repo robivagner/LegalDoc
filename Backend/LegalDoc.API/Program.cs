@@ -30,9 +30,11 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 .AddDefaultTokenProviders();
 
 // --- 3. AUTENTIFICARE JWT ---
-var jwtSecret = builder.Configuration["JwtSettings:Secret"];
+var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") 
+                ?? builder.Configuration["JwtSettings:Secret"];
+
 if (string.IsNullOrEmpty(jwtSecret))
-    throw new Exception("CRITICAL ERROR: JWT Secret is missing from configuration!");
+    throw new InvalidOperationException("CRITICAL ERROR: JWT Secret is missing from configuration!");
 
 var key = Encoding.ASCII.GetBytes(jwtSecret);
 
@@ -169,4 +171,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

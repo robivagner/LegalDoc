@@ -25,15 +25,22 @@ jobs:
         with:
           dotnet-version: 8.x
 
+      - name: ⚙️ Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: ⚙️ Setup Java (Necesar pentru SonarScanner)
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 🛠️ Install SonarScanner
+      - name: 🛠️ Install Tools & Deps
         run: |
           dotnet tool install --global dotnet-sonarscanner
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov httpx fastapi
 
       # --- 1. SCANARE SONARCLOUD ---
       - name: 🧹 SonarCloud Analysis
@@ -41,15 +48,30 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          # Folosim variabila de mediu $SONAR_TOKEN pentru securitate
+          # Pornim scannerul și definim rutele pentru rapoartele de coverage (C# și Python)
           dotnet-sonarscanner begin /k:"robivagner_LegalDoc" /o:"robivagner" \
             /d:sonar.token="$SONAR_TOKEN" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.python.version=3.11 \
-            /d:sonar.exclusions="**/bin/**,**/obj/**"
+            /d:sonar.exclusions="**/bin/**,**/obj/**,**/Migrations/**" \
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
+            /d:sonar.python.coverage.reportPaths="Python/coverage.xml"
           
+          # Build .NET
           dotnet build LegalDoc.sln
           
+          # Rulăm testele .NET (Unit + Integration) și generăm coverage
+          dotnet test LegalDoc.sln --no-build --verbosity normal \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=opencover \
+            /p:CoverletOutput=./TestResults/coverage.opencover.xml
+
+          # Rulăm testele Python și generăm coverage.xml
+          cd Python
+          pytest --cov=. --cov-report=xml:coverage.xml
+          cd ..
+          
+          # Finalizăm analiza și trimitem datele la SonarCloud
           dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"
 
       # --- 2. LOGIN LA GITHUB CONTAINER REGISTRY ---

@@ -10,12 +10,12 @@ public class UpdateDocumentAiAnalysisCommandHandler(IDocumentsRepository reposit
         var document = await repository.FindAsync(request.DocumentId, cancellationToken);
 
         if (document == null)
-            throw new Exception("Document not found.");
+            throw new KeyNotFoundException("Document not found.");
         
         var analysis = await aiService.AnalyzeDocumentAsync(document.Content);
         
         if (analysis == null)
-            throw new Exception("AI analysis error.");
+            throw new InvalidOperationException("AI analysis error.");
         
         document.UpdateAiAnalysis(analysis.Summary, analysis.Clauses, analysis.Risks);
 

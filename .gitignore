@@ -1,12 +1,30 @@
-﻿[Bb]in/
+﻿# --- Pachete și compilare ---
+[Bb]in/
 [Oo]bj/
 *.user
 .vs/
 .idea/
+
+# --- Configurații și Secrete ---
 .env
 *.env
+# Ignorăm fișierul de comenzi dacă conține date sensibile
+Python/commands.txt
+
+# --- Medii virtuale Python ---
 venv/
 .venv/
 env/
+
+# --- Date specifice aplicației ---
 LegalDoc.API/DocumentsArchive/
-Python/commands.txt
+
+# --- Rapoarte de Teste și Coverage (Ignorate peste tot) ---
+# Fișiere Python
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+
+# Fișiere .NET
+TestResults/

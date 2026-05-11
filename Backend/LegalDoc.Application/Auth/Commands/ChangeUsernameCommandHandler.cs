@@ -11,14 +11,26 @@ public class ChangeUsernameCommandHandler(UserManager<IdentityUser> userManager,
     public async Task<AuthResponse> Handle(ChangeUsernameCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.UserId.ToString());
-        if (user == null) throw new Exception("Utilizatorul nu a fost găsit.");
+
+        if (user == null) 
+        {
+            throw new KeyNotFoundException("Utilizatorul nu a fost găsit.");
+        }
     
         var existingUser = await userManager.FindByNameAsync(request.NewUsername);
+
         if (existingUser != null && existingUser.Id != user.Id)
-            throw new Exception("Acest nume de utilizator este deja utilizat.");
+        {
+            throw new InvalidOperationException("Acest nume de utilizator este deja utilizat.");
+        }
 
         var result = await userManager.SetUserNameAsync(user, request.NewUsername);
-        if (!result.Succeeded) throw new Exception("Eroare la baza de date.");
+
+        if (!result.Succeeded) 
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Eroare la actualizarea numelui de utilizator: {errors}");
+        }
     
         await userManager.UpdateNormalizedUserNameAsync(user);
         

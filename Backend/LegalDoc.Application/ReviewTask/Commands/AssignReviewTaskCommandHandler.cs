@@ -10,7 +10,7 @@ public class AssignReviewTaskCommandHandler(IDocumentsRepository documentsReposi
     {
         var document = await documentsRepository.FindAsync(request.DocumentId, cancellationToken);
         if (document == null)
-            throw new Exception("Document not found.");
+            throw new KeyNotFoundException("Document not found.");
         if (document.Status != DocumentStatus.AwaitingReview)
             throw new InvalidOperationException("Document is not awaiting review.");
         
@@ -18,7 +18,7 @@ public class AssignReviewTaskCommandHandler(IDocumentsRepository documentsReposi
         
         var lawyer = await lawyerRepository.FindAsync(request.LawyerId, cancellationToken);
         if (lawyer == null)
-            throw new Exception("Lawyer not found.");
+            throw new KeyNotFoundException("Lawyer not found.");
         if(!lawyer.IsActive)
             throw new InvalidOperationException("Lawyer is not active.");
         

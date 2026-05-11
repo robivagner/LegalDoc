@@ -17,4 +17,4 @@ async def test_full_analysis_flow_with_retry_failure(mocker):
         response = await ac.post("/analyze", json={"content": "Document lung pentru testul de integrare care va eșua."})
 
     assert response.status_code == 500
-    assert "503" in response.json()["detail"]
+    assert "eroare neașteptată" in response.json()["detail"]

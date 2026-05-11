@@ -12,7 +12,10 @@ public class JwtTokenGenerator(IConfiguration config) : IJwtTokenGenerator
 {
     public string GenerateToken(IdentityUser user, IList<string> roles)
     {
-        var jwtSecret = config["JwtSettings:Secret"] ?? throw new InvalidOperationException("JWT Secret is missing");
+        var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") 
+                        ?? config["JwtSettings:Secret"]
+                        ?? throw new InvalidOperationException("JWT Secret is missing from Environment Variables");
+
         var key = Encoding.ASCII.GetBytes(jwtSecret);
 
         var claims = new List<Claim>
@@ -31,7 +34,9 @@ public class JwtTokenGenerator(IConfiguration config) : IJwtTokenGenerator
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddDays(7),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key), 
+                SecurityAlgorithms.HmacSha256Signature)
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();

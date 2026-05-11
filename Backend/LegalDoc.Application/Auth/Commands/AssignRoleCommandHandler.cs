@@ -13,17 +13,21 @@ public class AssignRoleCommandHandler(UserManager<IdentityUser> userManager, Rol
         
         var validRoles = new[] { "Lawyer", "Viewer" };
         if (!validRoles.Contains(request.RoleName))
-            throw new Exception("Rolul specificat nu este valid.");
+            throw new ArgumentException($"Rolul '{request.RoleName}' nu este valid pentru această operațiune.");
         
         if (!await roleManager.RoleExistsAsync(request.RoleName))
-            throw new Exception("Rolul nu există în baza de date.");
+            throw new InvalidOperationException("Rolul nu există în baza de date.");
         
         var currentRoles = await userManager.GetRolesAsync(user);
         await userManager.RemoveFromRolesAsync(user, currentRoles);
         
         var result = await userManager.AddToRoleAsync(user, request.RoleName);
         if (!result.Succeeded)
-            throw new Exception("Eroare la asignarea rolului.");
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            
+            throw new InvalidOperationException($"Eroare la asignarea rolului: {errors}");
+        }
 
         return Unit.Value;
     }
