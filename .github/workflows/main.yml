@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main", "master" ] # Se declanșează la orice push pe main
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "master" ]
 
 jobs:
   build-and-analyze:
@@ -42,7 +42,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet-sonarscanner begin /k:"robivagner_LegalDoc" /o:"robivagner" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.python.version=3.11
-          dotnet build Backend/WebAPI/LegalDoc.API.sln
+          dotnet build Backend/LegalDoc.API/LegalDoc.API.sln
           dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       # --- 2. LOGIN LA GITHUB CONTAINER REGISTRY ---
