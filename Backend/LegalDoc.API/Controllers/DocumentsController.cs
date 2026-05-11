@@ -66,7 +66,9 @@ public class DocumentsController(IMediator mediator) : ControllerBase
 
 public class UploadDocumentRequest
 {
-    public string Title { get; set; } = string.Empty;
-    public Guid RegistryId { get; set; }
-    public IFormFile File { get; set; } = default!;
+    public required string Title { get; set; } 
+    
+    public required Guid RegistryId { get; set; }
+    
+    public required IFormFile File { get; set; }
 }

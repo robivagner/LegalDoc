@@ -11,11 +11,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Lawyer> Lawyers => Set<Lawyer>();
     public DbSet<ReviewTask> ReviewTasks => Set<ReviewTask>();
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(builder);
         
-        modelBuilder.Entity<LegalDocument>(e =>
+        builder.Entity<LegalDocument>(e =>
         {
             e.HasKey(d => d.Id);
             e.Property(d => d.Title).IsRequired().HasMaxLength(200);
@@ -30,7 +30,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             e.Property(d => d.RegistryId).IsRequired();
         });
         
-        modelBuilder.Entity<Registry>(e =>
+        builder.Entity<Registry>(e =>
         {
             e.HasKey(d => d.Id);
             e.Property(d => d.Name).IsRequired().HasMaxLength(150);
@@ -38,7 +38,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             e.Property(d => d.Availability).IsRequired();
         });
         
-        modelBuilder.Entity<Lawyer>(e =>
+        builder.Entity<Lawyer>(e =>
         {
             e.HasKey(l => l.Id);
             e.Property(l => l.Name).IsRequired().HasMaxLength(200);
@@ -47,7 +47,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             e.Property(l => l.IsActive).IsRequired();
         });
         
-        modelBuilder.Entity<ReviewTask>(e =>
+        builder.Entity<ReviewTask>(e =>
         {
             e.HasKey(t => t.Id);
             e.Property(t => t.Description).HasMaxLength(500);

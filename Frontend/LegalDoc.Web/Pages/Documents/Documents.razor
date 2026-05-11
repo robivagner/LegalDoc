@@ -8,12 +8,11 @@
 @inject State.AppState AppState
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-16 mt-6">
-    @* Header cu Titlu și Butoane Acțiuni *@
+    @* --- HEADER ȘI BUTOANE --- *@
     <div class="d-flex align-center mb-6">
         <MudText Typo="Typo.h4" Color="Color.Primary" Style="font-weight: 700">Arhivă Documente</MudText>
         <MudSpacer />
         
-        @* Butonul de Filtru (Quality of Life) *@
         <MudToggleIconButton @bind-Toggled="@_filtersVisible"
                              Icon="@Icons.Material.Filled.FilterList"
                              Color="Color.Default"
@@ -30,22 +29,22 @@
         </MudButton>
     </div>
 
-    @* Panelul de Filtre (Apare doar la apăsarea butonului) *@
+    @* --- PANEL FILTRE --- *@
     <MudCollapse Expanded="_filtersVisible">
         <MudPaper Elevation="2" Class="pa-4 mb-6 border-solid border-2 mud-border-primary">
             <MudGrid>
                 <MudItem xs="12" sm="6" md="3">
                     <MudTextField @bind-Value="_searchTitle" Placeholder="Caută după titlu..." 
                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" 
-                                  Clearable="true" Immediate="true" Label="Titlu Document" />
+                                  Clearable="true" Immediate="true" Label="Titlu Document" Variant="Variant.Outlined" />
                 </MudItem>
                 <MudItem xs="12" sm="6" md="3">
                     <MudTextField @bind-Value="_searchFileName" Placeholder="Caută fișier..." 
                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.FilePresent" 
-                                  Clearable="true" Immediate="true" Label="Nume Fișier" />
+                                  Clearable="true" Immediate="true" Label="Nume Fișier" Variant="Variant.Outlined" />
                 </MudItem>
                 <MudItem xs="12" sm="6" md="2">
-                    <MudSelect T="Guid?" Label="Registru" @bind-Value="_filterRegistryId" Clearable="true">
+                    <MudSelect T="Guid?" Label="Registru" @bind-Value="_filterRegistryId" Clearable="true" Variant="Variant.Outlined">
                         <MudSelectItem T="Guid?" Value="null">Toate Registrele</MudSelectItem>
                         @foreach (var reg in _registries)
                         {
@@ -54,13 +53,8 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" sm="6" md="2">
-                    <MudSelect T="string" 
-                               Label="Status" 
-                               @bind-Value="_filterStatus" 
-                               Clearable="true" 
-                               Placeholder="Alege Status"
-                               ShrinkLabel="true"
-                               AnchorOrigin="Origin.BottomCenter">
+                    <MudSelect T="string" Label="Status" @bind-Value="_filterStatus" Clearable="true" 
+                               ShrinkLabel="true" Variant="Variant.Outlined">
                         <MudSelectItem T="string" Value="@(null)">Toate</MudSelectItem>
                         <MudSelectItem T="string" Value="@("Uploaded")">Uploaded</MudSelectItem>
                         <MudSelectItem T="string" Value="@("AwaitingReview")">AwaitingReview</MudSelectItem>
@@ -72,107 +66,48 @@
                 <MudItem xs="12" sm="12" md="2">
                     <MudTextField @bind-Value="_searchId" Placeholder="ID Document..." 
                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Fingerprint" 
-                                  Clearable="true" Immediate="true" Label="Căutare ID" />
+                                  Clearable="true" Immediate="true" Label="Căutare ID" Variant="Variant.Outlined" />
                 </MudItem>
             </MudGrid>
         </MudPaper>
     </MudCollapse>
 
-    @* Tabelul Principal *@
-    <MudTable Items="@FilteredDocuments" 
-              Hover="true" 
-              Bordered="false" 
-              Striped="false" 
-              Elevation="4" 
-              Loading="@_loading"
-              Breakpoint="Breakpoint.Sm"
-              SortLabel="Sortează după">
+    @* --- TABEL PRINCIPAL --- *@
+    <MudTable Items="@FilteredDocuments" Hover="true" Elevation="4" Loading="@_loading" SortLabel="Sortează după">
         <HeaderContent>
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => x.Title)">
-                    Titlu
-                </MudTableSortLabel>
-            </MudTh>
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => x.FileName)">
-                    Nume Fișier
-                </MudTableSortLabel>
-            </MudTh>
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => GetRegistryName(x.RegistryId))">
-                    Nume Registru
-                </MudTableSortLabel>
-            </MudTh>
-            <MudTh>
-                <MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DocumentDto, object>(x => x.CreatedAt)">
-                    Data
-                </MudTableSortLabel>
-            </MudTh>
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => GetStatusWeight(x.Status))">
-                    Status
-                </MudTableSortLabel>
-            </MudTh>
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => x.Id)">
-                    ID Document
-                </MudTableSortLabel>
-            </MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => x.Title)">Titlu</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => x.FileName)">Nume Fișier</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => GetRegistryName(x.RegistryId))">Nume Registru</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<DocumentDto, object>(x => x.CreatedAt)">Data</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => GetStatusWeight(x.Status))">Status</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<DocumentDto, object>(x => x.Id)">ID Document</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: right">Acțiuni</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Titlu">
-                <MudText Typo="Typo.body1" Style="font-weight: 500">@context.Title</MudText>
-            </MudTd>
+            <MudTd DataLabel="Titlu"><MudText Typo="Typo.body1" Style="font-weight: 500">@context.Title</MudText></MudTd>
             <MudTd DataLabel="Nume Fișier">@context.FileName</MudTd>
-            <MudTd DataLabel="Registru">
-                <MudText Typo="Typo.body2" Style="font-weight: 500;">
-                    @GetRegistryName(context.RegistryId)
-                </MudText>
-            </MudTd>
+            <MudTd DataLabel="Registru"><MudText Typo="Typo.body2" Style="font-weight: 500;">@GetRegistryName(context.RegistryId)</MudText></MudTd>
             <MudTd DataLabel="Data">@context.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</MudTd>
             <MudTd DataLabel="Status">
-                <MudChip T="string" 
-                         Color="@GetStatusColor(context.Status)" 
-                         Size="Size.Small" 
-                         Variant="Variant.Filled" 
-                         Style="font-weight: 600; min-width: 100px; justify-content: center;">
+                <MudChip T="string" Color="@GetStatusColor(context.Status)" Size="Size.Small" Variant="Variant.Filled" Style="font-weight: 600; min-width: 100px; justify-content: center;">
                     @context.Status
                 </MudChip>
             </MudTd>
-            <MudTd DataLabel="ID Document">
-                <MudText Typo="Typo.caption" Style="font-family: monospace; color: gray;">
-                    @context.Id
-                </MudText>
-            </MudTd>
+            <MudTd DataLabel="ID Document"><MudText Typo="Typo.caption" Style="font-family: monospace; color: gray;">@context.Id</MudText></MudTd>
             <MudTd DataLabel="Acțiuni" Style="text-align: right">
                 <MudTooltip Text="Lansează Analiză AI">
-                    <MudIconButton Icon="@Icons.Material.Filled.AutoAwesome" 
-                                   Color="Color.Secondary" 
-                                   Size="Size.Small" 
-                                   Disabled="@(context.Status != "Uploaded" && context.Status != "Rejected")"
-                                   OnClick="@(() => RunAiAnalysis(context))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.AutoAwesome" Color="Color.Secondary" Size="Size.Small" 
+                                   Disabled="@(context.Status != "Uploaded" && context.Status != "Rejected")" OnClick="@(() => RunAiAnalysis(context))" />
                 </MudTooltip>
-
                 <MudTooltip Text="Vezi Analiză">
-                    <MudIconButton Icon="@Icons.Material.Filled.Visibility" 
-                                   Color="Color.Info" 
-                                   Size="Size.Small" 
-                                   Disabled="@(string.IsNullOrEmpty(context.Summary))"
-                                   OnClick="@(() => ViewAiAnalysis(context))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info" Size="Size.Small" 
+                                   Disabled="@(string.IsNullOrEmpty(context.Summary))" OnClick="@(() => ViewAiAnalysis(context))" />
                 </MudTooltip>
-
                 <MudTooltip Text="Descarcă Original">
-                    <MudIconButton Icon="@Icons.Material.Filled.Download"
-                                   Color="Color.Default"
-                                   Size="Size.Small"
-                                   OnClick="@(() => DownloadDocument(context))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Download" Color="Color.Default" Size="Size.Small" OnClick="@(() => DownloadDocument(context))" />
                 </MudTooltip>
             </MudTd>
         </RowTemplate>
-        <NoRecordsContent>
-            <MudText Typo="Typo.body1">Nu am găsit niciun document care să corespundă criteriilor.</MudText>
-        </NoRecordsContent>
     </MudTable>
 </MudContainer>
 
@@ -181,7 +116,6 @@
     private List<RegistryDto> _registries = new();
     private bool _loading = true;
     
-    // Variabile pentru Filtre
     private bool _filtersVisible = false;
     private string _searchTitle = "";
     private string _searchFileName = "";
@@ -189,31 +123,33 @@
     private Guid? _filterRegistryId;
     private string _filterStatus = null;
 
-    // Proprietatea care filtrează lista în memorie
-    private IEnumerable<DocumentDto> FilteredDocuments => _documents.Where(doc =>
-    {
-        if (!string.IsNullOrWhiteSpace(_searchTitle) && !doc.Title.Contains(_searchTitle, StringComparison.OrdinalIgnoreCase))
-            return false;
+    // --- FILTRARE OPTIMIZATĂ ---
+    private IEnumerable<DocumentDto> FilteredDocuments => _documents.Where(MatchesSearch);
 
-        if (!string.IsNullOrWhiteSpace(_searchFileName) && !doc.FileName.Contains(_searchFileName, StringComparison.OrdinalIgnoreCase))
-            return false;
+    private bool MatchesSearch(DocumentDto doc) =>
+        MatchTitle(doc) &&
+        MatchFileName(doc) &&
+        MatchId(doc) &&
+        MatchRegistry(doc) &&
+        MatchStatus(doc);
 
-        if (!string.IsNullOrWhiteSpace(_searchId) && !doc.Id.ToString().Contains(_searchId, StringComparison.OrdinalIgnoreCase))
-            return false;
+    private bool MatchTitle(DocumentDto d) => 
+        string.IsNullOrWhiteSpace(_searchTitle) || d.Title.Contains(_searchTitle, StringComparison.OrdinalIgnoreCase);
 
-        if (_filterRegistryId.HasValue && doc.RegistryId != _filterRegistryId.Value)
-            return false;
-        
-        if (!string.IsNullOrEmpty(_filterStatus) && doc.Status != _filterStatus)
-            return false;
+    private bool MatchFileName(DocumentDto d) => 
+        string.IsNullOrWhiteSpace(_searchFileName) || d.FileName.Contains(_searchFileName, StringComparison.OrdinalIgnoreCase);
 
-        return true;
-    });
+    private bool MatchId(DocumentDto d) => 
+        string.IsNullOrWhiteSpace(_searchId) || d.Id.ToString().Contains(_searchId, StringComparison.OrdinalIgnoreCase);
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-    }
+    private bool MatchRegistry(DocumentDto d) => 
+        !_filterRegistryId.HasValue || d.RegistryId == _filterRegistryId.Value;
+
+    private bool MatchStatus(DocumentDto d) => 
+        string.IsNullOrEmpty(_filterStatus) || d.Status == _filterStatus;
+
+    // --- LOGICĂ DATE ---
+    protected override async Task OnInitializedAsync() => await LoadData();
 
     private async Task LoadData()
     {
@@ -226,52 +162,31 @@
 
             _documents = docsTask.Result;
             _registries = regsTask.Result;
-            
-            var pendingAiCount = _documents.Count(d => d.Status == "Uploaded" || d.Status == "Rejected");
-            
-            AppState.UpdatePendingAiAnalyses(pendingAiCount);
+            AppState.UpdatePendingAiAnalyses(_documents.Count(d => d.Status == "Uploaded" || d.Status == "Rejected"));
         }
-        catch (Exception ex)
-        {
-            Snackbar.Add("Eroare la încărcare: " + ex.Message, Severity.Error);
-        }
-        finally
-        {
-            _loading = false;
-        }
+        catch (Exception ex) { Snackbar.Add("Eroare: " + ex.Message, Severity.Error); }
+        finally { _loading = false; }
     }
-    
-    private string GetRegistryName(Guid registryId)
-    {
-        var registry = _registries.FirstOrDefault(r => r.Id == registryId);
-        return registry != null ? registry.Name : "Registru Necunoscut";
-    }
-    
-    private Color GetStatusColor(string status)
-    {
-        if (string.IsNullOrWhiteSpace(status)) return Color.Default;
 
-        return status.Trim() switch
-        {
-            "Uploaded"       => Color.Default,
-            "AwaitingReview" => Color.Warning,
-            "InReview"       => Color.Info,
-            "Completed"      => Color.Success,
-            "Rejected"       => Color.Error,
-            _                => Color.Default
-        };
-    }
-    
+    private string GetRegistryName(Guid registryId) => 
+        _registries.FirstOrDefault(r => r.Id == registryId)?.Name ?? "Registru Necunoscut";
+
+    private Color GetStatusColor(string status) => status?.Trim() switch
+    {
+        "Uploaded"       => Color.Default,
+        "AwaitingReview" => Color.Warning,
+        "InReview"       => Color.Info,
+        "Completed"      => Color.Success,
+        "Rejected"       => Color.Error,
+        _                => Color.Default
+    };
+
     private async Task OpenUploadDialog()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
         var dialog = await DialogService.ShowAsync<UploadDocumentDialog>("Upload", options);
         var result = await dialog.Result;
-        
-        if (result is { Canceled: false, Data: UploadDocumentDialog.UploadRequest request })
-        {
-            await HandleUpload(request);
-        }
+        if (result is { Canceled: false, Data: UploadDocumentDialog.UploadRequest request }) await HandleUpload(request);
     }
 
     private async Task HandleUpload(UploadDocumentDialog.UploadRequest request)
@@ -280,6 +195,7 @@
         {
             _loading = true;
             using var content = new MultipartFormDataContent();
+            // maxAllowedSize: 10MB
             var fileContent = new StreamContent(request.File.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024));
             
             content.Add(fileContent, "File", request.File.Name);
@@ -287,72 +203,40 @@
             content.Add(new StringContent(request.RegistryId.ToString()), "RegistryId");
 
             await DocService.UploadDocumentAsync(content);
-            Snackbar.Add("Document încărcat cu succes!", Severity.Success);
+            Snackbar.Add("Succes!", Severity.Success);
             await LoadData(); 
         }
-        catch (Exception ex)
-        {
-            Snackbar.Add("Eroare la upload: " + ex.Message, Severity.Error);
-        }
-        finally
-        {
-            _loading = false;
-        }
+        catch (Exception ex) { Snackbar.Add("Eroare upload: " + ex.Message, Severity.Error); }
+        finally { _loading = false; }
     }
-    
+
     private async Task RunAiAnalysis(DocumentDto doc)
     {
-        Snackbar.Add("Se inițializează analiza AI...", Severity.Info);
         try
         {
             await DocService.TriggerAiAnalysisAsync(doc.Id);
             await LoadData();
-            Snackbar.Add("Analiză finalizată cu succes!", Severity.Success);
+            Snackbar.Add("Analiză finalizată!", Severity.Success);
         }
-        catch (Exception ex)
-        {
-            Snackbar.Add("Eroare: " + ex.Message, Severity.Error);
-        }
+        catch (Exception ex) { Snackbar.Add("Eroare: " + ex.Message, Severity.Error); }
     }
-    
+
     private async Task DownloadDocument(DocumentDto doc)
     {
-        try
-        {
-            Snackbar.Add($"Se descarcă {doc.FileName}...", Severity.Info);
-            await DocService.DownloadDocumentAsync(doc.Id, doc.FileName);
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Eroare la descărcare: {ex.Message}", Severity.Error);
-        }
+        try { await DocService.DownloadDocumentAsync(doc.Id, doc.FileName); }
+        catch (Exception ex) { Snackbar.Add("Eroare: " + ex.Message, Severity.Error); }
     }
 
     private async Task ViewAiAnalysis(DocumentDto doc)
     {
         var parameters = new DialogParameters { { "Document", doc } };
-        var options = new DialogOptions { 
-            CloseOnEscapeKey = true, 
-            MaxWidth = MaxWidth.Medium, 
-            FullWidth = true,
-            CloseButton = true 
-        };
-
-        await DialogService.ShowAsync<DocumentPreviewDialog>("Previzualizare și Analiză", parameters, options);
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true, CloseButton = true };
+        await DialogService.ShowAsync<DocumentPreviewDialog>("Previzualizare", parameters, options);
     }
-    
-    private int GetStatusWeight(string status)
+
+    private int GetStatusWeight(string status) => status?.Trim() switch
     {
-        if (string.IsNullOrEmpty(status)) return 0;
-
-        return status.Trim() switch
-        {
-            "Uploaded"       => 1,
-            "AwaitingReview" => 2,
-            "InReview"       => 3,
-            "Rejected"       => 4,
-            "Completed"      => 5,
-            _                => 0
-        };
-    }
+        "Uploaded"       => 1, "AwaitingReview" => 2, "InReview"       => 3,
+        "Rejected"       => 4, "Completed"      => 5, _                => 0
+    };
 }

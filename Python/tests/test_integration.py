@@ -13,7 +13,7 @@ async def test_full_analysis_flow_with_retry_failure(mocker):
     mock_gen.models.generate_content = AsyncMock(side_effect=Exception("503 UNAVAILABLE"))
 
     # Folosim AsyncClient pentru a evita eroarea "Event loop is closed"
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="https://test") as ac:
         response = await ac.post("/analyze", json={"content": "Document lung pentru testul de integrare care va eșua."})
 
     assert response.status_code == 500

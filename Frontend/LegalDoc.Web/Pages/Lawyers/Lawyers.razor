@@ -168,30 +168,38 @@
     private string _searchId = "";
     private bool? _searchIsActive = null;
 
-    // --- Proprietate calculată pentru filtrare realtime ---
-    private IEnumerable<LawyerDto> FilteredLawyers => _lawyers.Where(l =>
-    {
-        if (!string.IsNullOrWhiteSpace(_searchName) && !l.Name.Contains(_searchName, StringComparison.OrdinalIgnoreCase))
-            return false;
+    // --- Proprietate calculată optimizată pentru SonarCloud ---
+    private IEnumerable<LawyerDto> FilteredLawyers => _lawyers.Where(MatchesSearch);
 
-        if (!string.IsNullOrWhiteSpace(_searchBarNumber) && !l.BarNumber.Contains(_searchBarNumber, StringComparison.OrdinalIgnoreCase))
-            return false;
+    private bool MatchesSearch(LawyerDto lawyer) =>
+        MatchName(lawyer) &&
+        MatchBarNumber(lawyer) &&
+        MatchEmail(lawyer) &&
+        MatchId(lawyer) &&
+        MatchStatus(lawyer);
 
-        if (!string.IsNullOrWhiteSpace(_searchEmail) && (l.Email == null || !l.Email.Contains(_searchEmail, StringComparison.OrdinalIgnoreCase)))
-            return false;
+    private bool MatchName(LawyerDto l) =>
+        string.IsNullOrWhiteSpace(_searchName) || 
+        l.Name.Contains(_searchName, StringComparison.OrdinalIgnoreCase);
 
-        if (!string.IsNullOrWhiteSpace(_searchId) && !l.Id.ToString().Contains(_searchId, StringComparison.OrdinalIgnoreCase))
-            return false;
+    private bool MatchBarNumber(LawyerDto l) =>
+        string.IsNullOrWhiteSpace(_searchBarNumber) || 
+        l.BarNumber.Contains(_searchBarNumber, StringComparison.OrdinalIgnoreCase);
 
-        if (_searchIsActive.HasValue && l.IsActive != _searchIsActive.Value)
-            return false;
+    private bool MatchEmail(LawyerDto l) =>
+        string.IsNullOrWhiteSpace(_searchEmail) || 
+        (l.Email?.Contains(_searchEmail, StringComparison.OrdinalIgnoreCase) ?? false);
 
-        return true;
-    });
+    private bool MatchId(LawyerDto l) =>
+        string.IsNullOrWhiteSpace(_searchId) || 
+        l.Id.ToString().Contains(_searchId, StringComparison.OrdinalIgnoreCase);
+
+    private bool MatchStatus(LawyerDto l) =>
+        !_searchIsActive.HasValue || 
+        l.IsActive == _searchIsActive.Value;
 
     protected override async Task OnInitializedAsync()
     {
-        // Am curățat logica de verificare a profilului de aici.
         await LoadLawyers();
     }
 

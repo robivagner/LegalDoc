@@ -13,9 +13,15 @@ class AnalysisRequest(BaseModel):
 async def root():
     return {"message": "LegalDoc AI Service is running"}
 
-@app.post("/analyze")
+@app.post(
+    "/analyze",
+    responses={
+        400: {"description": "Conținut prea scurt sau lipsă pentru analiză."},
+        500: {"description": "Eroare internă în timpul procesării AI."}
+    }
+)
 async def process_document(request: AnalysisRequest):
-    # Verificăm dacă am primit conținut
+    # 1. Validare conținut
     if not request.content or len(request.content.strip()) < 10:
         raise HTTPException(
             status_code=400,
@@ -23,13 +29,14 @@ async def process_document(request: AnalysisRequest):
         )
 
     try:
-        # Trimitem content către analizator
+        # 2. Analiză AI
         result = await analyzer.analyze(request.content)
         return result
-    except Exception as e:
-        print(f"CRASH: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    except Exception as e:
+        print(f"CRASH AI SERVICE: {str(e)}")
+        # Documentăm și eroarea 500 pentru o transparență totală
+        raise HTTPException(
+            status_code=500,
+            detail="Serviciul AI a întâmpinat o eroare neașteptată."
+        )

@@ -20,10 +20,32 @@ class DocumentAnalyzer:
         self.model_name = "gemini-3.1-flash-lite-preview"
 
     async def analyze(self, content: str):
+        self._validate_content(content)
+        prompt = self._get_prompt(content)
+
+        max_retries = 3
+        base_delay = 2
+
+        for attempt in range(max_retries):
+            try:
+                response = await self.client.aio.models.generate_content(
+                    model=self.model_name,
+                    contents=prompt,
+                    config={'response_mime_type': 'application/json'}
+                )
+                return self._parse_response(response)
+
+            except Exception as e:
+                await self._handle_exception(e, attempt, max_retries, base_delay)
+
+    def _validate_content(self, content: str):
+        """Validează dacă conținutul este suficient pentru analiză."""
         if not content or len(content.strip()) < 10:
             raise ValueError("Conținut insuficient pentru analiză.")
 
-        prompt = f"""
+    def _get_prompt(self, content: str):
+        """Returnează prompt-ul original, exact așa cum a fost definit."""
+        return f"""
         You are an expert Senior Legal Counsel with 20 years of experience in contract litigation. 
         Analyze the following legal document and provide a DETAILED, EXHAUSTIVE professional analysis.
         
@@ -45,42 +67,32 @@ class DocumentAnalyzer:
         ---
         """
 
-        max_retries = 3
-        base_delay = 2
+    def _parse_response(self, response):
+        """Curăță și parsează răspunsul primit de la AI."""
+        if not response.text:
+            raise Exception("AI-ul a returnat un răspuns gol.")
 
-        for attempt in range(max_retries):
-            try:
-                response = await self.client.aio.models.generate_content(
-                    model=self.model_name,
-                    contents=prompt,
-                    config={
-                        'response_mime_type': 'application/json'
-                    }
-                )
+        clean_text = response.text.strip()
 
-                if not response.text:
-                    raise Exception("AI-ul a returnat un răspuns gol.")
+        # Elimină eventualele tag-uri de markdown
+        if clean_text.startswith("```json"):
+            clean_text = clean_text[7:]
+        if clean_text.endswith("```"):
+            clean_text = clean_text[:-3]
 
-                # --- FIX SINTAXĂ: Totul pe un singur rând pentru a evita SyntaxError ---
-                clean_text = response.text.strip()
+        return json.loads(clean_text.strip())
 
-                if clean_text.startswith("```json"):
-                    clean_text = clean_text[7:]
+    async def _handle_exception(self, e, attempt, max_retries, base_delay):
+        error_msg = str(e)
+        retryable_errors = ["503", "429", "UNAVAILABLE"]
 
-                if clean_text.endswith("```"):
-                    clean_text = clean_text[:-3]
+        should_retry = any(err in error_msg for err in retryable_errors)
 
-                return json.loads(clean_text.strip())
+        if should_retry and attempt < max_retries - 1:
+            wait_time = base_delay * (2 ** attempt)
+            print(f"Modelul {self.model_name} ocupat. Reîncercăm {attempt + 1}/{max_retries} în {wait_time}s...")
+            await asyncio.sleep(wait_time)
+            return
 
-            except Exception as e:
-                error_msg = str(e)
-                # Dacă modelul e ocupat, reîncercăm conform logicii de Exponential Backoff
-                if "503" in error_msg or "429" in error_msg or "UNAVAILABLE" in error_msg:
-                    if attempt < max_retries - 1:
-                        wait_time = base_delay * (2 ** attempt)
-                        print(f"Modelul {self.model_name} ocupat. Reîncercăm {attempt + 1}/{max_retries} în {wait_time}s...")
-                        await asyncio.sleep(wait_time)
-                        continue
-
-                print(f"Eroare AI finală: {error_msg}")
-                raise e
+        print(f"Eroare AI finală: {error_msg}")
+        raise e

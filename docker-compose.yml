@@ -38,6 +38,7 @@
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Postgres=Host=legaldoc-db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       - AiServiceSettings__BaseUrl=http://legaldoc-ai:8000
+      - JwtSettings__Secret=${JWT_SECRET}
     ports:
       - "5000:8080"
     depends_on:

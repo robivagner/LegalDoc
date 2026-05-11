@@ -51,7 +51,12 @@
                                   Clearable="true" Immediate="true" Label="Nume Avocat" />
                 </MudItem>
                 <MudItem xs="12" sm="6" md="2">
-                    <MudSelect T="string" Label="Status" @bind-Value="_searchStatus" Clearable="true">
+                    <MudSelect T="string" 
+                               Label="Status" 
+                               @bind-Value="_searchStatus" 
+                               Clearable="true" 
+                               ShrinkLabel="true" 
+                               Variant="Variant.Outlined">
                         <MudSelectItem Value="@("")">Toate</MudSelectItem>
                         <MudSelectItem Value="@("Created")">Created</MudSelectItem>
                         <MudSelectItem Value="@("Completed")">Completed</MudSelectItem>
@@ -150,7 +155,7 @@
 @code {
     private List<ReviewTaskDto> _tasks = new();
     private List<LawyerDto> _lawyers = new();
-    private List<DocumentDto> _documents = new(); 
+    private List<DocumentDto> _documents = new();
     private bool _loading = true;
 
     // --- State Filtre ---
@@ -161,27 +166,37 @@
     private string _searchStatus = "";
     private string _searchId = "";
 
-    // --- Proprietate calculată pentru filtrare realtime ---
-    private IEnumerable<ReviewTaskDto> FilteredTasks => _tasks.Where(t =>
-    {
-        if (!string.IsNullOrWhiteSpace(_searchDescription) && (t.Description == null || !t.Description.Contains(_searchDescription, StringComparison.OrdinalIgnoreCase)))
-            return false;
-        
-        if (!string.IsNullOrWhiteSpace(_searchDocumentTitle) && !GetDocumentTitle(t.DocumentId).Contains(_searchDocumentTitle, StringComparison.OrdinalIgnoreCase))
-            return false;
-        
-        if (!string.IsNullOrWhiteSpace(_searchLawyerName) && !GetLawyerName(t.LawyerId).Contains(_searchLawyerName, StringComparison.OrdinalIgnoreCase))
-            return false;
+    // --- Proprietate calculată OPTIMIZATĂ pentru Sonar (S3776 Fixed) ---
+    private IEnumerable<ReviewTaskDto> FilteredTasks => _tasks.Where(MatchesSearch);
 
-        if (!string.IsNullOrWhiteSpace(_searchStatus) && t.Status != _searchStatus)
-            return false;
+    private bool MatchesSearch(ReviewTaskDto task) =>
+        MatchDescription(task) &&
+        MatchDocumentTitle(task) &&
+        MatchLawyerName(task) &&
+        MatchStatus(task) &&
+        MatchId(task);
 
-        if (!string.IsNullOrWhiteSpace(_searchId) && !t.Id.ToString().Contains(_searchId, StringComparison.OrdinalIgnoreCase))
-            return false;
+    private bool MatchDescription(ReviewTaskDto t) =>
+        string.IsNullOrWhiteSpace(_searchDescription) || 
+        (t.Description?.Contains(_searchDescription, StringComparison.OrdinalIgnoreCase) ?? false);
 
-        return true;
-    });
+    private bool MatchDocumentTitle(ReviewTaskDto t) =>
+        string.IsNullOrWhiteSpace(_searchDocumentTitle) || 
+        GetDocumentTitle(t.DocumentId).Contains(_searchDocumentTitle, StringComparison.OrdinalIgnoreCase);
 
+    private bool MatchLawyerName(ReviewTaskDto t) =>
+        string.IsNullOrWhiteSpace(_searchLawyerName) || 
+        GetLawyerName(t.LawyerId).Contains(_searchLawyerName, StringComparison.OrdinalIgnoreCase);
+
+    private bool MatchStatus(ReviewTaskDto t) =>
+        string.IsNullOrWhiteSpace(_searchStatus) || 
+        t.Status == _searchStatus;
+
+    private bool MatchId(ReviewTaskDto t) =>
+        string.IsNullOrWhiteSpace(_searchId) || 
+        t.Id.ToString().Contains(_searchId, StringComparison.OrdinalIgnoreCase);
+
+    // --- LOGICĂ ÎNCĂRCARE DATE ---
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
@@ -273,7 +288,6 @@
         };
 
         var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
-        
         var dialog = await DialogService.ShowAsync<ReviewTaskDialog>("Evaluare Task și Analiză AI", parameters, options);
         var result = await dialog.Result;
         
@@ -286,14 +300,12 @@
     private async Task OpenCreateDialog()
     {
         var filteredDocs = _documents.Where(d => d.Status == "AwaitingReview").ToList();
-
         var parameters = new DialogParameters
         {
             { "AvailableDocuments", filteredDocs }
         };
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, MaxWidth = MaxWidth.Small };
-        
         var dialog = await DialogService.ShowAsync<AssignTaskDialog>("Asignează Task Nou", parameters, options);
         var result = await dialog.Result;
 

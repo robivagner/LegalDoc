@@ -17,7 +17,7 @@
                 </MudText>
             </div>
 
-            <MudForm @ref="_form" @bind-IsValid="@_success">
+            <MudForm @bind-IsValid="@_success">
                 <MudTextField T="string" Label="Nume Utilizator (Username)" 
                               @bind-Value="_model.UserName" 
                               Required="true" 
@@ -57,7 +57,6 @@
 </MudContainer>
 
 @code {
-    private MudForm _form = null!;
     private bool _success;
     private bool _loading;
     private RegisterRequest _model = new();

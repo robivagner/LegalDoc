@@ -16,9 +16,9 @@ public class AiService : IAiService
         _httpClient.BaseAddress = new Uri(baseUrl ?? "http://localhost:8000");
     }
 
-    public async Task<AiAnalysisResponse?> AnalyzeDocumentAsync(string content)
+    public async Task<AiAnalysisResponse?> AnalyzeDocumentAsync(string text)
     {
-        var request = new AiAnalysisRequest(content);
+        var request = new AiAnalysisRequest(text);
         
         var response = await _httpClient.PostAsJsonAsync("/analyze", request);
 
