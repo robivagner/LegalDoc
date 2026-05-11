@@ -68,7 +68,7 @@ jobs:
 
           # Rulăm testele Python și generăm coverage.xml
           cd Python
-          pytest --cov=. --cov-report=xml:coverage.xml
+          python -m pytest --cov=. --cov-report=xml:coverage.xml
           cd ..
           
           # Finalizăm analiza și trimitem datele la SonarCloud
