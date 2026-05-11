@@ -2,7 +2,7 @@
 using LegalDoc.Application.Registry.Commands;
 using LegalDoc.Application.Registry.Validators;
 
-namespace LegalDoc.Tests.Unit;
+namespace LegalDoc.Tests.Unit.RegistriesTests;
 
 public class CreateRegistryValidatorTests
 {

@@ -1,10 +1,10 @@
-﻿using LegalDoc.Application.Abstractions;
+﻿using FluentAssertions;
+using LegalDoc.Application.Abstractions;
 using LegalDoc.Application.ReviewTask.Commands;
 using LegalDoc.Domain.Entities;
 using Moq;
-using FluentAssertions;
 
-namespace LegalDoc.Tests.Unit;
+namespace LegalDoc.Tests.Unit.ReviewTasksTests;
 
 public class UpdateReviewTaskLawyerTests
 {
@@ -70,5 +70,27 @@ public class UpdateReviewTaskLawyerTests
 
         // Assert
         await act.Should().ThrowAsync<Exception>().WithMessage("New lawyer is not active.");
+    }
+    
+    [Fact]
+    public void ReviewTask_UpdateLawyer_ShouldWork()
+    {
+        var task = ReviewTask.Create(Guid.NewGuid(), Guid.NewGuid(), "Desc");
+        var newLawyerId = Guid.NewGuid();
+    
+        task.UpdateLawyer(newLawyerId);
+    
+        task.LawyerId.Should().Be(newLawyerId);
+    }
+    
+    [Fact]
+    public async Task Handle_ReviewTaskNotFound_ThrowsKeyNotFoundException()
+    {
+        _taskRepoMock.Setup(x => x.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ReviewTask)null!);
+
+        var act = () => _handler.Handle(new UpdateReviewTaskLawyerCommand(Guid.NewGuid(), Guid.NewGuid()), default);
+
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 }

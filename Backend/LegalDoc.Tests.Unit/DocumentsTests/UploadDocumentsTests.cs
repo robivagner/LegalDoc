@@ -1,17 +1,15 @@
-﻿using LegalDoc.Application.Abstractions;
+﻿using FluentAssertions;
+using LegalDoc.Application.Abstractions;
 using LegalDoc.Application.Document.Commands;
 using LegalDoc.Domain.Entities;
 using Moq;
-using FluentAssertions;
-using LegalDoc.Infrastructure.Services;
 
-namespace LegalDoc.Tests.Unit;
+namespace LegalDoc.Tests.Unit.DocumentsTests;
 
 public class UploadDocumentTests
 {
     private readonly Mock<IDocumentsRepository> _docRepoMock;
     private readonly Mock<IRegistryRepository> _registryRepoMock;
-    private readonly Mock<IDocumentTextExtractor> _extractorMock;
     private readonly Mock<IFileStorageService> _storageServiceMock;
     private readonly UploadDocumentCommandHandler _handler;
 
@@ -20,11 +18,11 @@ public class UploadDocumentTests
         // 1. Simulam interfețele de repository folosind Moq
         _docRepoMock = new Mock<IDocumentsRepository>();
         _registryRepoMock = new Mock<IRegistryRepository>();
-        _extractorMock = new Mock<IDocumentTextExtractor>();
+        var extractorMock = new Mock<IDocumentTextExtractor>();
         _storageServiceMock = new Mock<IFileStorageService>();
 
         // 2. Initializam Handler-ul cu obiectele simulate (Mocks)
-        _handler = new UploadDocumentCommandHandler(_docRepoMock.Object, _registryRepoMock.Object, _extractorMock.Object, _storageServiceMock.Object);
+        _handler = new UploadDocumentCommandHandler(_docRepoMock.Object, _registryRepoMock.Object, extractorMock.Object, _storageServiceMock.Object);
     }
 
     [Fact]

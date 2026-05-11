@@ -1,10 +1,10 @@
-﻿using LegalDoc.Application.Abstractions;
+﻿using FluentAssertions;
+using LegalDoc.Application.Abstractions;
 using LegalDoc.Application.ReviewTask.Queries;
 using LegalDoc.Domain.Entities;
 using Moq;
-using FluentAssertions;
 
-namespace LegalDoc.Tests.Unit;
+namespace LegalDoc.Tests.Unit.ReviewTasksTests;
 
 public class GetReviewTasksTests
 {

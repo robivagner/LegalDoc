@@ -1,11 +1,11 @@
-﻿using LegalDoc.Application.Abstractions;
+﻿using FluentAssertions;
+using LegalDoc.Application.Abstractions;
 using LegalDoc.Application.Document.Queries;
 using LegalDoc.Domain.Entities;
 using LegalDoc.Domain.Enums;
 using Moq;
-using FluentAssertions;
 
-namespace LegalDoc.Tests.Unit;
+namespace LegalDoc.Tests.Unit.DocumentsTests;
 
 public class GetDocumentsQueryTests
 {

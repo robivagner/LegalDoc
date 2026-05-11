@@ -2,7 +2,7 @@
 using LegalDoc.Application.Document.Commands;
 using LegalDoc.Application.Document.Validators;
 
-namespace LegalDoc.Tests.Unit;
+namespace LegalDoc.Tests.Unit.DocumentsTests;
 
 public class UploadDocumentValidatorTests
 {
