@@ -31,6 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Frontend\LegalDoc.Web\LegalDoc.Web.csproj" />
       <ProjectReference Include="..\LegalDoc.API\LegalDoc.API.csproj" />
     </ItemGroup>
 

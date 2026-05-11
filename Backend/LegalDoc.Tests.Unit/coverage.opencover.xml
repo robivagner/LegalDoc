@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CoverageSession>
-  <Summary numSequencePoints="705" visitedSequencePoints="525" numBranchPoints="156" visitedBranchPoints="117" sequenceCoverage="74.46" branchCoverage="75" maxCyclomaticComplexity="169" minCyclomaticComplexity="59" visitedClasses="84" numClasses="102" visitedMethods="136" numMethods="172" />
+  <Summary numSequencePoints="705" visitedSequencePoints="536" numBranchPoints="156" visitedBranchPoints="120" sequenceCoverage="76.02" branchCoverage="76.92" maxCyclomaticComplexity="169" minCyclomaticComplexity="59" visitedClasses="84" numClasses="102" visitedMethods="136" numMethods="172" />
   <Modules>
-    <Module hash="C0E1ED81-D74C-4D39-9DF2-4B388EFE97D7">
+    <Module hash="C3E26A78-954C-431A-851E-15F187D72951">
       <ModulePath>LegalDoc.Application.dll</ModulePath>
-      <ModuleTime>2026-05-11T05:25:56</ModuleTime>
+      <ModuleTime>2026-05-11T09:54:35</ModuleTime>
       <ModuleName>LegalDoc.Application</ModuleName>
       <Files>
         <File uid="1" fullPath="C:\Users\Robert\RiderProjects\Proiect.NET2\Backend\LegalDoc.Application\ReviewTask\Queries\GetReviewTasksQuery.cs" />
@@ -1915,9 +1915,9 @@
         </Class>
       </Classes>
     </Module>
-    <Module hash="28D562B2-D394-45F8-B983-AE18BE0C363B">
+    <Module hash="411778BC-E799-4276-8DA5-7AB322B8F386">
       <ModulePath>LegalDoc.Domain.dll</ModulePath>
-      <ModuleTime>2026-05-11T05:25:56</ModuleTime>
+      <ModuleTime>2026-05-11T09:54:35</ModuleTime>
       <ModuleName>LegalDoc.Domain</ModuleName>
       <Files>
         <File uid="53" fullPath="C:\Users\Robert\RiderProjects\Proiect.NET2\Backend\LegalDoc.Domain\Entities\Lawyer.cs" />
@@ -2573,9 +2573,9 @@
         </Class>
       </Classes>
     </Module>
-    <Module hash="B0F73128-A13C-40D3-BB88-497EBDF0AF56">
+    <Module hash="7BC9062C-C5B0-47CE-9D25-C5C14D20F52A">
       <ModulePath>LegalDoc.Infrastructure.dll</ModulePath>
-      <ModuleTime>2026-05-11T05:25:56</ModuleTime>
+      <ModuleTime>2026-05-11T09:54:35</ModuleTime>
       <ModuleName>LegalDoc.Infrastructure</ModuleName>
       <Files>
         <File uid="57" fullPath="C:\Users\Robert\RiderProjects\Proiect.NET2\Backend\LegalDoc.Infrastructure\Services\AiService.cs" />
@@ -2643,37 +2643,37 @@
           </Methods>
         </Class>
         <Class>
-          <Summary numSequencePoints="14" visitedSequencePoints="3" numBranchPoints="4" visitedBranchPoints="1" sequenceCoverage="21.42" branchCoverage="25" maxCyclomaticComplexity="4" minCyclomaticComplexity="4" visitedClasses="1" numClasses="1" visitedMethods="1" numMethods="1" />
+          <Summary numSequencePoints="14" visitedSequencePoints="14" numBranchPoints="4" visitedBranchPoints="4" sequenceCoverage="100" branchCoverage="100" maxCyclomaticComplexity="4" minCyclomaticComplexity="4" visitedClasses="1" numClasses="1" visitedMethods="1" numMethods="1" />
           <FullName>LegalDoc.Infrastructure.Services.DocumentTextExtractor</FullName>
           <Methods>
-            <Method cyclomaticComplexity="4" nPathComplexity="4" sequenceCoverage="21.42" branchCoverage="25" isConstructor="True" isGetter="False" isSetter="False" isStatic="True">
-              <Summary numSequencePoints="14" visitedSequencePoints="3" numBranchPoints="4" visitedBranchPoints="1" sequenceCoverage="21.42" branchCoverage="25" maxCyclomaticComplexity="4" minCyclomaticComplexity="4" visitedClasses="0" numClasses="0" visitedMethods="1" numMethods="1" />
+            <Method cyclomaticComplexity="4" nPathComplexity="4" sequenceCoverage="100" branchCoverage="100" isConstructor="True" isGetter="False" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="14" visitedSequencePoints="14" numBranchPoints="4" visitedBranchPoints="4" sequenceCoverage="100" branchCoverage="100" maxCyclomaticComplexity="4" minCyclomaticComplexity="4" visitedClasses="0" numClasses="0" visitedMethods="1" numMethods="1" />
               <MetadataToken />
               <Name>System.String LegalDoc.Infrastructure.Services.DocumentTextExtractor::ExtractTextFromPdf(System.String)</Name>
               <FileRef uid="58" />
               <SequencePoints>
-                <SequencePoint vc="1" uspid="10" ordinal="0" sl="10" sc="1" el="10" ec="2" bec="0" bev="0" fileid="58" />
-                <SequencePoint vc="1" uspid="11" ordinal="1" sl="11" sc="1" el="11" ec="2" bec="2" bev="1" fileid="58" />
+                <SequencePoint vc="2" uspid="10" ordinal="0" sl="10" sc="1" el="10" ec="2" bec="0" bev="0" fileid="58" />
+                <SequencePoint vc="2" uspid="11" ordinal="1" sl="11" sc="1" el="11" ec="2" bec="2" bev="2" fileid="58" />
                 <SequencePoint vc="1" uspid="12" ordinal="2" sl="12" sc="1" el="12" ec="2" bec="0" bev="0" fileid="58" />
-                <SequencePoint vc="0" uspid="14" ordinal="3" sl="14" sc="1" el="14" ec="2" bec="0" bev="0" fileid="58" />
-                <SequencePoint vc="0" uspid="15" ordinal="4" sl="15" sc="1" el="15" ec="2" bec="0" bev="0" fileid="58" />
-                <SequencePoint vc="0" uspid="16" ordinal="5" sl="16" sc="1" el="16" ec="2" bec="0" bev="0" fileid="58" />
-                <SequencePoint vc="0" uspid="17" ordinal="6" sl="17" sc="1" el="17" ec="2" bec="2" bev="0" fileid="58" />
-                <SequencePoint vc="0" uspid="18" ordinal="7" sl="18" sc="1" el="18" ec="2" bec="0" bev="0" fileid="58" />
-                <SequencePoint vc="0" uspid="19" ordinal="8" sl="19" sc="1" el="19" ec="2" bec="0" bev="0" fileid="58" />
-                <SequencePoint vc="0" uspid="20" ordinal="9" sl="20" sc="1" el="20" ec="2" bec="0" bev="0" fileid="58" />
-                <SequencePoint vc="0" uspid="21" ordinal="10" sl="21" sc="1" el="21" ec="2" bec="0" bev="0" fileid="58" />
-                <SequencePoint vc="0" uspid="22" ordinal="11" sl="22" sc="1" el="22" ec="2" bec="0" bev="0" fileid="58" />
-                <SequencePoint vc="0" uspid="23" ordinal="12" sl="23" sc="1" el="23" ec="2" bec="0" bev="0" fileid="58" />
-                <SequencePoint vc="0" uspid="24" ordinal="13" sl="24" sc="1" el="24" ec="2" bec="0" bev="0" fileid="58" />
+                <SequencePoint vc="1" uspid="14" ordinal="3" sl="14" sc="1" el="14" ec="2" bec="0" bev="0" fileid="58" />
+                <SequencePoint vc="1" uspid="15" ordinal="4" sl="15" sc="1" el="15" ec="2" bec="0" bev="0" fileid="58" />
+                <SequencePoint vc="1" uspid="16" ordinal="5" sl="16" sc="1" el="16" ec="2" bec="0" bev="0" fileid="58" />
+                <SequencePoint vc="5" uspid="17" ordinal="6" sl="17" sc="1" el="17" ec="2" bec="2" bev="2" fileid="58" />
+                <SequencePoint vc="1" uspid="18" ordinal="7" sl="18" sc="1" el="18" ec="2" bec="0" bev="0" fileid="58" />
+                <SequencePoint vc="1" uspid="19" ordinal="8" sl="19" sc="1" el="19" ec="2" bec="0" bev="0" fileid="58" />
+                <SequencePoint vc="1" uspid="20" ordinal="9" sl="20" sc="1" el="20" ec="2" bec="0" bev="0" fileid="58" />
+                <SequencePoint vc="1" uspid="21" ordinal="10" sl="21" sc="1" el="21" ec="2" bec="0" bev="0" fileid="58" />
+                <SequencePoint vc="1" uspid="22" ordinal="11" sl="22" sc="1" el="22" ec="2" bec="0" bev="0" fileid="58" />
+                <SequencePoint vc="1" uspid="23" ordinal="12" sl="23" sc="1" el="23" ec="2" bec="0" bev="0" fileid="58" />
+                <SequencePoint vc="1" uspid="24" ordinal="13" sl="24" sc="1" el="24" ec="2" bec="0" bev="0" fileid="58" />
               </SequencePoints>
               <BranchPoints>
                 <BranchPoint vc="1" uspid="11" ordinal="0" path="0" offset="12" offsetend="14" sl="11" fileid="58" />
-                <BranchPoint vc="0" uspid="11" ordinal="1" path="1" offset="12" offsetend="26" sl="11" fileid="58" />
-                <BranchPoint vc="0" uspid="17" ordinal="3" path="1" offset="95" offsetend="56" sl="17" fileid="58" />
-                <BranchPoint vc="0" uspid="17" ordinal="2" path="0" offset="95" offsetend="97" sl="17" fileid="58" />
+                <BranchPoint vc="1" uspid="11" ordinal="1" path="1" offset="12" offsetend="26" sl="11" fileid="58" />
+                <BranchPoint vc="1" uspid="17" ordinal="3" path="1" offset="95" offsetend="56" sl="17" fileid="58" />
+                <BranchPoint vc="1" uspid="17" ordinal="2" path="0" offset="95" offsetend="97" sl="17" fileid="58" />
               </BranchPoints>
-              <MethodPoint vc="3" uspid="0" p8:type="SequencePoint" ordinal="0" offset="0" sc="0" sl="10" ec="1" el="24" bec="0" bev="0" fileid="58" xmlns:p8="xsi" />
+              <MethodPoint vc="14" uspid="0" p8:type="SequencePoint" ordinal="0" offset="0" sc="0" sl="10" ec="1" el="24" bec="0" bev="0" fileid="58" xmlns:p8="xsi" />
             </Method>
           </Methods>
         </Class>

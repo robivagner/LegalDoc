@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Moq;
 
-namespace LegalDoc.Tests.Unit.AuthTests;
+namespace LegalDoc.Tests.Unit;
 
 public static class MockIdentityHelpers
 {
@@ -22,5 +22,12 @@ public static class MockIdentityHelpers
             new Mock<ILookupNormalizer>().Object, 
             new Mock<IdentityErrorDescriber>().Object, 
             null!);
+    }
+    
+    public static Mock<RoleManager<IdentityRole>> MockRoleManager()
+    {
+        var store = new Mock<IRoleStore<IdentityRole>>();
+        return new Mock<RoleManager<IdentityRole>>(
+            store.Object, null!, null!, null!, null!);
     }
 }
